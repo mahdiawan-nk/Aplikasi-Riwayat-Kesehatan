@@ -125,7 +125,9 @@
 
         const headers = {
             headers: {
-                'Content-Type': 'multipart/form-data'
+                'Content-Type': 'multipart/form-data',
+                'Accept': 'application/json',
+                'Authorization': `Bearer ${token}`
             }
         }
 
@@ -206,7 +208,7 @@
             DataKaryawan.nama_istri_suami = $('#nama_istri_suami').val();
             DataKaryawan.no_hp_istri_suami = $('#no_hp_istri_suami').val();
 
-            headers.headers.Authorization = `Bearer ${token}`
+            
             try {
                 const response = await axios.post(BaseUrlApi, DataKaryawan, headers);
                 Swal.fire({
@@ -309,7 +311,7 @@
 
         const editDataKaryawan = async (id) => {
             try {
-                const response = await axios.get(BaseUrlApi + '/' + id);
+                const response = await axios.get(BaseUrlApi + '/' + id,headers);
                 const {
                     no_badge,
                     nama_karyawan,
@@ -361,7 +363,7 @@
             }).then(async (result) => {
                 if (result.isConfirmed) {
                     try {
-                        const response = await axios.delete(BaseUrlApi + '/' + id);
+                        const response = await axios.delete(BaseUrlApi + '/' + id,headers);
                         Swal.fire({
                             toast: true,
                             position: "top-end",

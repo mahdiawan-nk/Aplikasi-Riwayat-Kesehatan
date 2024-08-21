@@ -249,7 +249,7 @@
 
         const showDataKaryawan = async (id) => {
             try {
-                const response = await axios.get('/api/karyawan/' + id);
+                const response = await axios.get('/api/karyawan/' + id,headers);
                 const data = response.data.data;
                 DataMcuKaryawan.id_karyawan = data.id;
                 $('#searchResults').empty().addClass('d-none');
@@ -382,7 +382,7 @@
             }).then(async (result) => {
                 if (result.isConfirmed) {
                     try {
-                        const response = await axios.delete(baseUrl + '/' + id);
+                        const response = await axios.delete(baseUrl + '/' + id,headers);
                         Swal.fire({
                             toast: true,
                             position: "top-end",
@@ -415,7 +415,7 @@
         }
         const editDataMcu = async (id) => {
             try {
-                const response = await axios.get(baseUrl + '/' + id);
+                const response = await axios.get(baseUrl + '/' + id,headers);
                 const {
                     id_karyawan,
                     riwayat_kesehatan,

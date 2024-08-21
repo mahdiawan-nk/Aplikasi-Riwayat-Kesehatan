@@ -100,7 +100,7 @@ class KaryawanController extends Controller
         $path = $fotoKaryawans->store('foto-karyawans', 'public');
 
         $validate['foto'] = $path;
-        $validate['password'] = Hash::make(date('dmY',$validate['tgl_lahir']));
+        $validate['password'] = Hash::make(date('dmY',strtotime($validate['tgl_lahir'])));
 
         $karyawan = Karyawan::create($validate);
         $response = [

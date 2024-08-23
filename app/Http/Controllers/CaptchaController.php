@@ -140,7 +140,7 @@ class CaptchaController extends Controller
         if ($captcha === $correctCaptcha) {
             return response()->json(['success'=> true,'message' => 'CAPTCHA valid'], 200);
         } else {
-            return response()->json(['success'=> true,'message' => 'CAPTCHA invalid'], 400);
+            return response()->json(['success'=> true,'message' => 'CAPTCHA invalid','captcha' => $captcha,'correctCaptcha' => $correctCaptcha], 400);
         }
     }
 

@@ -182,7 +182,7 @@
                 } else {
                     Swal.fire({
                         title: "Error",
-                        text: "Something went wrong. Please try again.",
+                        text: error.response.data.errors,
                         icon: "error"
                     });
                 }

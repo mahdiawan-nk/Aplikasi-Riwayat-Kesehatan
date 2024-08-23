@@ -214,7 +214,7 @@
 
         const searchDataKaryawan = async (value) => {
             try {
-                const response = await axios.get('/api/karyawan', {
+                const response = await axios.get('/api/karyawan',headers, {
                     params: {
                         search: value
                     }

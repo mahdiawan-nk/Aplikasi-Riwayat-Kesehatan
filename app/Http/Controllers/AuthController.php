@@ -254,7 +254,6 @@ class AuthController extends Controller
 
         if ($user) {
             // Hapus OTP setelah verifikasi
-            Redis::del('otp_' . $user->email);
 
             // Cek peran user apakah admin atau karyawan
             if ($user instanceof \App\Models\User) {

@@ -187,7 +187,8 @@ class AuthController extends Controller
     {
         $otp = rand(100000, 999999); // Generate a 6-digit OTP
         // Store OTP in Redis with a 5-minute expiration
-        Redis::setex('otp_' . $email, 600, $otp);
+        // Redis::setex('otp_' . $email, 600, $otp);
+        Cache::put('otp_'.$email, $otp, 600);
         // Send OTP by email
         Mail::to($email)->send(new SendOtpMail($otp));
     }
@@ -216,7 +217,8 @@ class AuthController extends Controller
         $email = $user->email;
     
         $otpKey = "otp_{$email}";
-        $storedOtp = Redis::get($otpKey);
+        // $storedOtp = Redis::get($otpKey);
+        $storedOtp = Cache::get($otpKey);
 
         if (!$storedOtp) {
             return response()->json(['message' => 'OTP has expired. Please request a new one.'], 422);
@@ -227,7 +229,8 @@ class AuthController extends Controller
         }
 
         // Delete the OTP from Redis after successful verification
-        Redis::del($otpKey);
+        // Redis::del($otpKey);
+        Cache::forget($otpKey);
 
         return response()->json(['message' => 'OTP verified successfully.', 'roles' => session('role')], 200);
     }

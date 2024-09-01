@@ -164,7 +164,7 @@
                 // Mengambil gambar CAPTCHA dari server
                 const response = await axios.post('/verify-otp', UsersOtp, headers);
                 if (roles == 'admin') {
-                    window.location.href = '/dashboard';
+                    window.location.href = '/panel-admin/dashboard';
 
                 }
 

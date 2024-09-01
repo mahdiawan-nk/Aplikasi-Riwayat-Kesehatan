@@ -21,13 +21,13 @@ class CheckLogin
         if ($guard == "karyawan") {
             if (Auth::guard('karyawan')->check()) {
                 // Redirect to dashboard if already logged in
-                return redirect('/mcu-user');
+                return $next($request);
             }
             return redirect('/');
         } else {
             if (Auth::check()) {
                 // Redirect to dashboard if already logged in
-                return redirect('/panel-admin/dashboard');
+                return $next($request);
             }
             return redirect('/panel-admin');
         }

@@ -187,7 +187,7 @@
                                                             <h6 class="text-white">Riwayat Kesehatan :</h6>
                                                             <p class="mb-1 text-white">adfsad</p>
                                                         </div>
-                                                        <div class="d-flex flex-column">
+                                                        <div class="d-flex flex-column mt-2">
                                                             <h6 class="text-white">Riwayat Konsumsi Obat :</h6>
                                                             <p class="mb-1 text-white"> dfads</p>
                                                         </div>
@@ -225,27 +225,36 @@
 
     <!--Password show & hide js -->
     <script>
-        const token = localStorage.getItem('token');
         const fetchData = async () => {
             try {
-                const response = await axios.get('/api/user', {
+                const response = await axios.get('/auth-user/me', {
                     headers: {
                         'Accept': 'application/json',
-                        'Authorization': `Bearer ${token}`,
                         'Content-Type': 'application/json'
                     },
                     // withCredentials: true // Pastikan cookie dikirimkan
                 });
-                $('#name').text(response.data.nama_karyawan).removeClass('loading-text text-white')
-                $('#no-badge').text(response.data.no_badge).removeClass('loading-text text-white')
-                $('#tempat-lahir').text(response.data.tempat_lahir).removeClass('loading-text text-white')
-                $('#tanggal-lahir').text(response.data.tgl_lahir).removeClass('loading-text text-white')
-                $('#no-wa').text(response.data.no_hp_wa).removeClass('loading-text text-white')
-                $('#istri-suami').text(response.data.nama_istri_suami).removeClass('loading-text text-white')
-                $('#no-wa-istri-suami').text(response.data.no_hp_istri_suami).removeClass('loading-text text-white')
-                $('#avatar-user').attr('src', response.data.foto ? '{{ asset('storage') }}/' + response.data.foto :
+                const data = response.data.data.data
+                $('#name').text(
+                    data.nama_karyawan).removeClass('loading-text text-white')
+                $('#no-badge').text(
+                    data.no_badge).removeClass('loading-text text-white')
+                $('#tempat-lahir').text(
+                    data.tempat_lahir).removeClass('loading-text text-white')
+                $('#tanggal-lahir').text(
+                    data.tgl_lahir).removeClass('loading-text text-white')
+                $('#no-wa').text(
+                    data.no_hp_wa).removeClass('loading-text text-white')
+                $('#istri-suami').text(
+                    data.nama_istri_suami).removeClass('loading-text text-white')
+                $('#no-wa-istri-suami').text(
+                    data.no_hp_istri_suami).removeClass('loading-text text-white')
+                $('#avatar-user').attr('src', 
+                data.foto ? '{{ asset('storage') }}/' + 
+                data.foto :
                     'https://dummyimage.com/160x215/000/fff.png&text=foto+user')
-                fetchDataMCu(response.data.id)
+                fetchDataMCu(
+                    data.id)
             } catch (error) {
                 console.log(error)
                 Swal.fire({
@@ -265,10 +274,9 @@
         };
         const fetchDataMCu = async (id) => {
             try {
-                const response = await axios.get('/api/mcu-user/' + id, {
+                const response = await axios.get('/mcu-user/' + id, {
                     headers: {
                         'Accept': 'application/json',
-                        'Authorization': `Bearer ${token}`,
                         'Content-Type': 'application/json'
                     },
                     // withCredentials: true // Pastikan cookie dikirimkan
@@ -300,8 +308,7 @@
                                                         aria-current="true">
                                                         <div class="d-flex w-100 justify-content-between">
                                                             <h5 class="mb-1">Periode MCU 2021</h5>
-                                                            <label class="text-primary"
-                                                                style="cursor: pointer">Download MCU</label>
+                                                            
                                                         </div>
                                                         <hr>
                                                         <div class="d-flex flex-column">
@@ -309,11 +316,13 @@
                                                             <p class="mb-1">${item.riwayat_kesehatan}
                                                             </p>
                                                         </div>
+                                                        <hr>
                                                         <div class="d-flex flex-column">
                                                             <h6>Riwayat Konsumsi Obat :</h6>
                                                             <p class="mb-1">${item.riwayat_konsumsi_obat}
                                                             </p>
                                                         </div>
+                                                        <hr>
                                                         <div class="d-flex flex-column">
                                                             <h6>Score Kardiovaskular Jakarta :</h6>
                                                             <p class="mb-1">${item.score_kardiovaskular_jakarta}
@@ -330,17 +339,15 @@
         const logOutUser = async () => {
             try {
                 // Kirim permintaan logout ke server
-                const response = await axios.post('/api/logout', {}, {
+                const response = await axios.get('/auth-user/logout', {}, {
                     headers: {
                         'Accept': 'application/json',
                         'Content-Type': 'application/json',
-                        'Authorization': `Bearer ${token}`
                     },
                     withCredentials: true // Pastikan cookie dikirimkan
                 });
 
                 // Redirect setelah logout berhasil
-                localStorage.removeItem('token');
                 window.location.href = "/";
             } catch (error) {
                 console.log(error);

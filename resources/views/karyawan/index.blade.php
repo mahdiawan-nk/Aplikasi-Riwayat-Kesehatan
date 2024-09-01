@@ -45,7 +45,7 @@
                                     <th>Nama</th>
                                     <th>TTL</th>
                                     <th>Age</th>
-                                    <th>No HP/WA</th>
+                                    <th>Kontak</th>
                                     <th>Nama Istri/Suami</th>
                                     <th>No HP Istri/Suami</th>
                                     <th>Action</th>
@@ -66,7 +66,7 @@
                                     <th>Nama</th>
                                     <th>TTL</th>
                                     <th>Age</th>
-                                    <th>No HP/WA</th>
+                                    <th>Kontak</th>
                                     <th>Nama Istri/Suami</th>
                                     <th>No HP Istri/Suami</th>
                                     <th>Action</th>
@@ -90,8 +90,8 @@
 
 @section('script')
     <script src="https://cdn.jsdelivr.net/npm/flatpickr"></script>
-    <script src="assets/lib/DataTable.js"></script>
-    <script src="assets/lib/FormValidate.js"></script>
+    <script src="{{ asset('') }}assets/lib/DataTable.js"></script>
+    <script src="{{ asset('') }}assets/lib/FormValidate.js"></script>
 
 
     <script>
@@ -106,7 +106,7 @@
         const elmtTable = $('#tb-data tbody');
 
         const tokenCsrf = "{{ csrf_token() }}";
-        const BaseUrlApi = "{{ url('/api/karyawan') }}";
+        const BaseUrlApi = "{{ url('panel-admin/master-karyawan/karyawan') }}";
 
         let modeForm = 'create';
         let uidData = null;
@@ -120,6 +120,7 @@
             no_hp_wa: null,
             nama_istri_suami: null,
             no_hp_istri_suami: null,
+            email:null,
             _token: "{{ csrf_token() }}"
         }
 
@@ -127,7 +128,6 @@
             headers: {
                 'Content-Type': 'multipart/form-data',
                 'Accept': 'application/json',
-                'Authorization': `Bearer ${token}`
             }
         }
 
@@ -164,7 +164,10 @@
                 },
                 {
                     key: 'no_hp_wa',
-                    label: 'No HP/WA'
+                    label: 'No HP/WA',
+                    render: (value, item) => {
+                        return `Telp : ${value} <br> Email : ${item.email?item.email:'-'}`
+                    }
                 },
                 {
                     key: 'nama_istri_suami',
@@ -207,8 +210,9 @@
             DataKaryawan.no_hp_wa = $('#no_hp_wa').val();
             DataKaryawan.nama_istri_suami = $('#nama_istri_suami').val();
             DataKaryawan.no_hp_istri_suami = $('#no_hp_istri_suami').val();
+            DataKaryawan.email = $('#email').val();
 
-            
+
             try {
                 const response = await axios.post(BaseUrlApi, DataKaryawan, headers);
                 Swal.fire({
@@ -256,6 +260,7 @@
             DataKaryawan.no_hp_wa = $('#no_hp_wa').val();
             DataKaryawan.nama_istri_suami = $('#nama_istri_suami').val();
             DataKaryawan.no_hp_istri_suami = $('#no_hp_istri_suami').val();
+            DataKaryawan.email = $('#email').val();
             DataKaryawan._method = 'PUT';
             headers.headers.Authorization = `Bearer ${token}`
             headers.headers.Accept = 'application/json';
@@ -311,7 +316,7 @@
 
         const editDataKaryawan = async (id) => {
             try {
-                const response = await axios.get(BaseUrlApi + '/' + id,headers);
+                const response = await axios.get(BaseUrlApi + '/' + id, headers);
                 const {
                     no_badge,
                     nama_karyawan,
@@ -323,6 +328,7 @@
                     foto
                 } = response.data.data;
                 uidData = id;
+                console.log(response.data)
 
                 $('#preview-image').attr('src', '{{ asset('storage') }}/' + foto)
                 $('#no_badge').val(no_badge);
@@ -363,7 +369,7 @@
             }).then(async (result) => {
                 if (result.isConfirmed) {
                     try {
-                        const response = await axios.delete(BaseUrlApi + '/' + id,headers);
+                        const response = await axios.delete(BaseUrlApi + '/' + id, headers);
                         Swal.fire({
                             toast: true,
                             position: "top-end",
@@ -380,7 +386,7 @@
                             const errors = error.response.data;
                             console.log(errors)
                             let errorMessage = errors.message;
-                            
+
                             Swal.fire({
                                 title: "Gagal Hapus",
                                 text: errorMessage,
@@ -489,6 +495,10 @@
                         required: true,
                         // date: true
                     },
+                    email: {
+                        required: true,
+                        email: true // Aturan validasi email
+                    },
                     no_hp_wa: {
                         required: true,
                         digits: true
@@ -530,7 +540,11 @@
                     no_hp_istri_suami: {
                         required: "No HP Istri/Suami is required",
                         // digits: "Please enter a valid phone number"
-                    }
+                    },
+                    email: {
+                        required: "Email is required",
+                        email: "Please enter a valid email address"
+                    },
                 },
                 errorClass: 'is-invalid',
                 submitHandler: function(form) {

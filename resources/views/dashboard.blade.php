@@ -1,6 +1,6 @@
 @extends('layouts.app')
 @section('style')
-    <link href="assets/plugins/datatable/css/dataTables.bootstrap5.min.css" rel="stylesheet" />
+    <link href="{{ asset('') }}assets/plugins/datatable/css/dataTables.bootstrap5.min.css" rel="stylesheet" />
 @endsection
 
 @section('wrapper')
@@ -137,7 +137,7 @@
 @endsection
 
 @section('script')
-    <script src="assets/plugins/apexcharts-bundle/js/apexcharts.min.js"></script>
+    <script src="{{ asset('') }}assets/plugins/apexcharts-bundle/js/apexcharts.min.js"></script>
 
     <script>
         e = {

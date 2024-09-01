@@ -65,19 +65,6 @@
                                                             class='bx bx-hide'></i></a>
                                                 </div>
                                             </div>
-                                            <div class="col-md-12">
-                                                <div class="captcha-box d-flex flex-column">
-                                                    <img src="" alt="" id="captcha"
-                                                        class="img-fluid w-25">
-                                                    <a href="#" class="py-2 d-flex flex-row align-items-center"
-                                                        id="refresh-captcha"><i class="bx bx-refresh font-22"></i>Tukar
-                                                        Code</a>
-                                                    <h6>Type The Code:</h6>
-                                                    <input name="code" class="form-control" id="math-answer">
-                                                    <small class="py-2 d-flex flex-row align-items-center fw-bold"
-                                                        id="message-captcha-valid"></small>
-                                                </div>
-                                            </div>
                                             <div class="col-12">
                                                 <div class="d-grid">
                                                     <button type="submit" class="btn btn-primary" id="btn-submit"><i
@@ -110,76 +97,31 @@
                 'Accept': 'application/json',
             }
         }
-        let capcthaAnswer = {
-            captcha: '',
-            _token: "{{ csrf_token() }}"
-        };
         let Users = {
             no_badge: '',
             password: '',
             type: 'karyawan',
             _token: "{{ csrf_token() }}"
         }
-        const captchaFetch = async () => {
-            try {
-                // Mengambil gambar CAPTCHA dari server
-                const response = await axios.get('/captcha/text-image', {
-                    responseType: 'blob' // Menetapkan responseType menjadi 'blob' untuk menangani data gambar
-                });
-
-                // Membuat URL objek dari data blob
-                const imageUrl = URL.createObjectURL(response.data);
-
-                // Mengatur atribut src dari elemen gambar dengan URL gambar
-                document.getElementById('captcha').src = imageUrl;
-            } catch (error) {
-                console.error('Error fetching CAPTCHA image:', error);
-            }
-        };
-
-        const validateCaptcha = async () => {
-            capcthaAnswer.captcha = document.getElementById('math-answer').value
-            try {
-                const response = await axios.post('/captcha/validate', capcthaAnswer);
-                if (response.data.success) {
-                    return true;
-                } else {
-                    Swal.fire({
-                        icon: "error",
-                        title: "Oops...",
-                        text: "Captcha tidak valid!",
-                    });
-                    return false;
-                }
-            } catch (error) {
-                Swal.fire({
-                    icon: "error",
-                    title: "Oops...",
-                    text: error.response.data.message,
-                });
-                return false
-            }
-        }
-
         const fetchLogin = async () => {
-            console.log(Users)
+            let btnSubmit = $('#btn-submit');
+
+            btnSubmit.attr('disabled', true);
+            btnSubmit.html('<i class="fa-solid fa-circle-notch fa-spin"></i> Loading...');
             try {
-                // Mengambil gambar CAPTCHA dari server
-                const response = await axios.post('/api/login', Users, headers);
+                const response = await axios.post('/auth-user/login', Users, headers);
                 console.log(response.data.data.token)
-                localStorage.setItem('token', response.data.data.token);
-                window.location.href = '/mcu-user';
+                window.location.href = '/auth-user/verifikasi-otp';
             } catch (error) {
                 if (error.response && error.response.status === 401) {
                     const errors = error.response.data.errors;
                     let errorMessage = "";
-                    
+
                     Swal.fire({
                         title: "unauthorized",
                         text: 'Gagal Login, silahkan coba kembali',
                         icon: "error"
                     });
-                    captchaFetch()
                 } else {
                     Swal.fire({
                         title: "Error",
@@ -187,55 +129,25 @@
                         icon: "error"
                     });
                 }
+                btnSubmit.attr('disabled', false);
+                btnSubmit.html('<i lass="fa-solid fa-lock-open" style="font-size:1em"></i>Sign in');
                 console.error(error);
             }
         }
 
         const init = () => {
-            captchaFetch();
 
             $('form#form-login').submit(async function(e) {
                 e.preventDefault();
                 Users.no_badge = $('input#username').val();
                 Users.password = $('input#inputChoosePassword').val();
-                try {
-                    const captchaValid = await validateCaptcha();
-                    if (captchaValid) {
-                        fetchLogin();
-                    } else {
-                        console.log('Captcha tidak valid');
-                    }
-                } catch (error) {
-                    console.error('Error saat memvalidasi captcha', error);
-                }
+                fetchLogin();
             });
         }
 
         init();
 
-        captchaFetch();
         $(document).ready(function() {
-            // $('input[name="code"]').keyup(function(e) {
-            //     // e.preventDefault();
-            //     // const ans = captcha.valid($('input[name="code"]').val());
-            //     // let ans = captcha.valid(code)
-            //     if (ans) {
-            //         $('#message-captcha-valid').html('<i class="bx bx-check font-22"></i> Benar')
-            //         $('#message-captcha-valid').addClass('text-success');
-            //         $('#message-captcha-valid').removeClass('text-danger');
-            //         $('#btn-submit').prop('disabled', false);
-            //     } else {
-            //         $('#message-captcha-valid').html('<i class="bx bx-x font-22"></i> Salah')
-            //         $('#message-captcha-valid').addClass('text-danger');
-            //         $('#message-captcha-valid').removeClass('text-success');
-            //         $('#btn-submit').prop('disabled', true);
-            //     }
-            // });
-
-            $('#refresh-captcha').on('click', function(e) {
-                e.preventDefault();
-                captchaFetch();
-            });
             $("#show_hide_password a").on('click', function(event) {
                 event.preventDefault();
                 if ($('#show_hide_password input').attr("type") == "text") {

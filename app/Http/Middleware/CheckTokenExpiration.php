@@ -26,15 +26,16 @@ class CheckTokenExpiration
             $tokenExpiration = $user->tokens->first()->expires_at;
 
             if ($tokenExpiration && Carbon::now()->greaterThan($tokenExpiration)) {
-                // Token telah kedaluwarsa
-                // $user->tokens()->where('id', $user->currentAccessToken()->id)->delete();
+            //     // Token telah kedaluwarsa
+            //     // $user->tokens()->where('id', $user->currentAccessToken()->id)->delete();
             
                 return response()->json([
                     'message' => 'Token has expired. Please log in again.',
                     'data'=>[
+                        'request'=>$request->all(),
                         'dateNow'=>\Carbon\Carbon::now()->translatedFormat('Y-m-d H:i:s'),
                         'tokenExpiration'=>$tokenExpiration,
-                        'persamaan'=>Carbon::now()->translatedFormat('Y-m-d H:i:s') > $tokenExpiration
+                        'persamaan'=>\Carbon\Carbon::now()->translatedFormat('Y-m-d H:i:s') > $tokenExpiration
                     ]
                 ], 401);
             }

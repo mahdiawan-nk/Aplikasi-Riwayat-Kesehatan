@@ -1,0 +1,150 @@
+{{-- <div class="col-md-12">
+                                                <div class="captcha-box d-flex flex-column">
+                                                    <img src="" alt="" id="captcha"
+                                                        class="img-fluid w-25">
+                                                    <a href="#" class="py-2 d-flex flex-row align-items-center"
+                                                        id="refresh-captcha"><i class="bx bx-refresh font-22"></i>Tukar
+                                                        Code</a>
+                                                    <h6>Type The Code:</h6>
+                                                    <input name="code" class="form-control" id="math-answer">
+                                                    <small class="py-2 d-flex flex-row align-items-center fw-bold"
+                                                        id="message-captcha-valid"></small>
+                                                </div>
+                                            </div> 
+                                            <script>
+                                                const url = "{{ url('/api/login') }}";
+                                                const headers = {
+                                                    headers: {
+                                                        'Content-Type': 'multipart/form-data',
+                                                        'Accept': 'application/json',
+                                                    }
+                                                }
+                                                let capcthaAnswer = {
+                                                    captcha: '',
+                                                    _token: "{{ csrf_token() }}"
+                                                };
+                                                let Users = {
+                                                    email: '',
+                                                    password: '',
+                                                    type: 'admin'
+                                                    _token: "{{ csrf_token() }}"
+                                        
+                                                }
+                                                const captchaFetch = async () => {
+                                                    try {
+                                                        // Mengambil gambar CAPTCHA dari server
+                                                        const response = await axios.get('/captcha/text-image', {
+                                                            responseType: 'blob' // Menetapkan responseType menjadi 'blob' untuk menangani data gambar
+                                                        });
+                                        
+                                                        // Membuat URL objek dari data blob
+                                                        const imageUrl = URL.createObjectURL(response.data);
+                                        
+                                                        // Mengatur atribut src dari elemen gambar dengan URL gambar
+                                                        document.getElementById('captcha').src = imageUrl;
+                                                    } catch (error) {
+                                                        console.error('Error fetching CAPTCHA image:', error);
+                                                    }
+                                                };
+                                        
+                                                const validateCaptcha = async () => {
+                                        
+                                                    capcthaAnswer.captcha = document.getElementById('math-answer').value
+                                                    try {
+                                                        const response = await axios.post('/captcha/validate', capcthaAnswer);
+                                                        if (response.data.success) {
+                                                            return true;
+                                                        } else {
+                                                            Swal.fire({
+                                                                icon: "error",
+                                                                title: "Oops...",
+                                                                text: "Captcha tidak valid!",
+                                                            });
+                                                            return false;
+                                                        }
+                                                    } catch (error) {
+                                                        console.log(error.response.data)
+                                                        Swal.fire({
+                                                            icon: "error",
+                                                            title: "Oops...",
+                                                            text: error.response.data.message,
+                                                        });
+                                                        return false
+                                                    }
+                                                }
+                                        
+                                                const fetchLogin = async () => {
+                                                    let btnSubmit = $('#btn-submit');
+                                        
+                                                    btnSubmit.attr('disabled', true);
+                                                    btnSubmit.html('<i class="fa-solid fa-circle-notch fa-spin"></i> Loading...');
+                                                    try {
+                                                        // Mengambil gambar CAPTCHA dari server
+                                                        const response = await axios.post('/api/login', Users, headers);
+                                                        window.location.href = '/verifikasi-otp';
+                                                        console.log(response.data)
+                                                    } catch (error) {
+                                                        if (error.response && error.response.status === 401) {
+                                                            const errors = error.response.data.errors;
+                                                            let errorMessage = "";
+                                        
+                                                            Swal.fire({
+                                                                title: "unauthorized",
+                                                                text: 'Gagal Login, silahkan coba kembali',
+                                                                icon: "error"
+                                                            });
+                                                            captchaFetch()
+                                                        } else {
+                                                            Swal.fire({
+                                                                title: "Error",
+                                                                text: error.response.data.errors,
+                                                                icon: "error"
+                                                            });
+                                                        }
+                                                        btnSubmit.attr('disabled', false);
+                                                        btnSubmit.html('<i lass="fa-solid fa-lock-open" style="font-size:1em"></i>Sign in');
+                                                        console.error(error);
+                                                    }
+                                                }
+                                        
+                                                const init = () => {
+                                                    // captchaFetch();
+                                        
+                                                    $('form#form-login').submit(async function(e) {
+                                                        e.preventDefault();
+                                                        Users.email = $('input#username').val();
+                                                        Users.password = $('input#inputChoosePassword').val();
+                                                        // try {
+                                                        //     const captchaValid = await validateCaptcha();
+                                                        //     if (captchaValid) {
+                                                                fetchLogin();
+                                                        //     } else {
+                                                        //         console.log('Captcha tidak valid');
+                                                        //     }
+                                                        // } catch (error) {
+                                                        //     console.error('Error saat memvalidasi captcha', error);
+                                                        // }
+                                                    });
+                                                }
+                                        
+                                                init();
+                                        
+                                                $(document).ready(function() {
+                                                    $('#refresh-captcha').on('click', function(e) {
+                                                        e.preventDefault();
+                                                        captchaFetch();
+                                                    });
+                                                    $("#show_hide_password a").on('click', function(event) {
+                                                        event.preventDefault();
+                                                        if ($('#show_hide_password input').attr("type") == "text") {
+                                                            $('#show_hide_password input').attr('type', 'password');
+                                                            $('#show_hide_password i').addClass("bx-hide");
+                                                            $('#show_hide_password i').removeClass("bx-show");
+                                                        } else if ($('#show_hide_password input').attr("type") == "password") {
+                                                            $('#show_hide_password input').attr('type', 'text');
+                                                            $('#show_hide_password i').removeClass("bx-hide");
+                                                            $('#show_hide_password i').addClass("bx-show");
+                                                        }
+                                                    });
+                                                });
+                                            </script>

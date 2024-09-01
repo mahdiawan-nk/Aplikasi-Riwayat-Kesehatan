@@ -90,6 +90,10 @@ class ValidateForm {
         return fieldElement.value.trim() !== "";
     }
 
+    email(fieldElement) {
+        const emailPattern = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+        return emailPattern.test(fieldElement.value);
+    }
     // Method validasi untuk minimal panjang karakter
     minlength(fieldElement, length) {
         return fieldElement.value.trim().length >= length;

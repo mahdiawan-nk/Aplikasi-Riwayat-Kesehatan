@@ -11,7 +11,7 @@ use Laravel\Sanctum\HasApiTokens;
 class Karyawan extends Authenticatable
 {
     use HasFactory, HasApiTokens;
-    protected $fillable = ['no_badge', 'nama_karyawan', 'tempat_lahir', 'tgl_lahir', 'no_hp_wa', 'nama_istri_suami', 'no_hp_istri_suami','foto','password'];
+    protected $fillable = ['no_badge', 'nama_karyawan', 'tempat_lahir', 'tgl_lahir', 'no_hp_wa','email' ,'nama_istri_suami', 'no_hp_istri_suami','foto','password'];
 
     // Mutator untuk menyimpan tanggal dalam format tglbulanTahun
     public function setTglLahirAttribute($value)

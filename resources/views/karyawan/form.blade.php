@@ -13,7 +13,7 @@
                     <hr>
                     <div class="row mb-3">
                         <div class="col-sm-12">
-                            <img src="assets/images/photo.png" alt="" id="preview-image"
+                            <img src="{{ asset('') }}assets/images/photo.png" alt="" id="preview-image"
                                 class="rounded border-1 border-dark d-block mx-auto"
                                 style="width: 15%!important;height: 150px;object-fit: contain">
                             <button class="btn btn-sm btn-secondary d-block mx-auto" id="upload-foto"
@@ -47,6 +47,13 @@
                         <div class="col-sm-4">
                             <input type="text" class="form-control" name="tgl_lahir" id="tgl_lahir"
                                 placeholder="Enter Tanggal Lahir" >
+                        </div>
+                    </div>
+                    <div class="row mb-3">
+                        <label for="email" class="col-sm-3 col-form-label">Email</label>
+                        <div class="col-sm-9">
+                            <input type="email" class="form-control" name="email" id="email"
+                                placeholder="Enter Email karyawan" >
                         </div>
                     </div>
                     <div class="row mb-3">

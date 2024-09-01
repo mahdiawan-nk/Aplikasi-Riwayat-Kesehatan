@@ -323,7 +323,7 @@
         const token = localStorage.getItem('token');
         const fetchData = async () => {
             try {
-                const response = await axios.get('/api/user', {
+                const response = await axios.get('/auth-user/me', {
                     headers: {
                         'Accept': 'application/json',
                         'Authorization': `Bearer ${token}`,

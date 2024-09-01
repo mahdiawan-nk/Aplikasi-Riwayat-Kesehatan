@@ -79,7 +79,8 @@ class KaryawanController extends Controller
             'no_hp_wa' => 'required|integer',
             'nama_istri_suami' => 'required',
             'no_hp_istri_suami' => 'required|integer',
-            'foto' => 'required|mimes:jpg,png,jpeg|max:2048'
+            'foto' => 'required|mimes:jpg,png,jpeg|max:2048',
+            'email'=>'required|email|unique:karyawans,email'
         ], [
             'no_badge.required' => 'Nomor badge wajib diisi.',
             'no_badge.unique' => 'Nomor badge sudah terdaftar.',
@@ -94,6 +95,8 @@ class KaryawanController extends Controller
             'foto.required' => 'Foto wajib diunggah.',
             'foto.mimes' => 'Foto harus berupa file dengan format: jpg, png, jpeg.',
             'foto.max' => 'Ukuran foto maksimal adalah 2MB.',
+            'email.required' => 'Email wajib diisi.',
+            'email.unique' => 'Email sudah terdaftar.'
         ]);
 
         $fotoKaryawans = $request->file('foto');
@@ -163,6 +166,7 @@ class KaryawanController extends Controller
         $karyawan->nama_istri_suami = $request->nama_istri_suami;
         $karyawan->no_hp_istri_suami = $request->no_hp_istri_suami;
         $karyawan->password = Hash::make(date('dmY',strtotime($request->tgl_lahir)));
+        $karyawan->email = $request->email;
 
         if ($request->hasFile('foto')) {
             if ($karyawan->foto) {

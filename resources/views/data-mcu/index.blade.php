@@ -1,7 +1,7 @@
 @extends('layouts.app')
 
 @section('style')
-    <link href="assets/plugins/datatable/css/dataTables.bootstrap5.min.css" rel="stylesheet" />
+    {{-- <link href="assets/plugins/datatable/css/dataTables.bootstrap5.min.css" rel="stylesheet" /> --}}
     <style>
         .search-result {
             position: absolute;
@@ -100,8 +100,8 @@
 @endsection
 
 @section('script')
-    <script src="assets/lib/DataTable.js"></script>
-    <script src="assets/lib/FormValidate.js"></script>
+    <script src="{{ asset('') }}assets/lib/DataTable.js"></script>
+    <script src="{{ asset('') }}assets/lib/FormValidate.js"></script>
 
     <script>
         const btnTambah = $('#tambah-data-karyawan');
@@ -111,7 +111,7 @@
         const pageFormData = $('#page-form-data');
         const listBtnAction = $('#list-action-btn');
         const btnCancel = $('#btn-cancel');
-        const baseUrl = "{{ url('/api/karyawan-mcu') }}";
+        const baseUrl = "{{ url('panel-admin/mcu-karyawan/karyawan-mcu') }}";
 
         let modeForm = 'create';
         let uidData = null;
@@ -214,7 +214,7 @@
 
         const searchDataKaryawan = async (value) => {
             try {
-                const response = await axios.get('/api/karyawan',headers, {
+                const response = await axios.get('/panel-admin/master-karyawan/karyawan',headers, {
                     params: {
                         search: value
                     }
@@ -249,7 +249,7 @@
 
         const showDataKaryawan = async (id) => {
             try {
-                const response = await axios.get('/api/karyawan/' + id,headers);
+                const response = await axios.get('/panel-admin/master-karyawan/karyawan/' + id,headers);
                 const data = response.data.data;
                 DataMcuKaryawan.id_karyawan = data.id;
                 $('#searchResults').empty().addClass('d-none');
@@ -288,7 +288,7 @@
             DataMcuKaryawan.score_kardiovaskular_jakarta = $('input[name="score_kardiovaskular_jakarta"]:checked')
                 .val();
             try {
-                const response = await axios.post('/api/karyawan-mcu', DataMcuKaryawan, headers);
+                const response = await axios.post(baseUrl, DataMcuKaryawan, headers);
                 Swal.fire({
                     toast: true,
                     position: "top-end",
@@ -334,7 +334,7 @@
                 .val();
             DataMcuKaryawan._method = 'PUT';
             try {
-                const response = await axios.post('/api/karyawan-mcu/' + uidData, DataMcuKaryawan, headers);
+                const response = await axios.post(baseUrl+'/' + uidData, DataMcuKaryawan, headers);
                 Swal.fire({
                     toast: true,
                     position: "top-end",

@@ -235,6 +235,8 @@
                     // withCredentials: true // Pastikan cookie dikirimkan
                 });
                 const data = response.data.data.data
+                console.log(data)
+
                 $('#name').text(
                     data.nama_karyawan).removeClass('loading-text text-white')
                 $('#no-badge').text(
@@ -282,6 +284,8 @@
                     // withCredentials: true // Pastikan cookie dikirimkan
                 });
                 const data = response.data.data;
+                console.log(data)
+
                 const elmView = $('#list-mcu-user');
                 elmView.empty();
                 if(data.length == 0){

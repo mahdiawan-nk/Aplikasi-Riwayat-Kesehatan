@@ -61,7 +61,7 @@ Route::group(['prefix' => 'panel-admin'], function () {
 
 Route::post('/verify-otp', [AuthController::class, 'verifyOtp']);
 Route::get('/resend-otp', [AuthController::class, 'reSendOTP']);
-Route::get('/mcu-user/{id}', [KaryawanMcuController::class, 'showByKaryawan'])->middleware('checklogin:karyawan');
+Route::get('/mcu-user/{id}', [KaryawanMcuController::class, 'showByKaryawan']);
 
 Route::get('/', function () {
     return view('authentication-user');
@@ -69,7 +69,7 @@ Route::get('/', function () {
 
 Route::get('/mcu-user', function () {
     return view('mcu-user.index');
-})->middleware('checklogin:karyawan');
+});
 
 // Route::get('/login', function () {
 //     return view('authentication-operator');

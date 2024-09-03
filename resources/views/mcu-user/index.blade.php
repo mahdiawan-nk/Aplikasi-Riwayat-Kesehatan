@@ -307,7 +307,7 @@
                                                         class="list-group-item list-group-item-action "
                                                         aria-current="true">
                                                         <div class="d-flex w-100 justify-content-between">
-                                                            <h5 class="mb-1">Periode MCU 2021</h5>
+                                                            <h5 class="mb-1">Periode MCU : ${item.periode_mcu}</h5>
                                                             
                                                         </div>
                                                         <hr>

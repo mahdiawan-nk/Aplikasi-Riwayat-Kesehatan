@@ -353,8 +353,9 @@
                 console.log(error);
             }
         };
-        fetchData();
+        
         $(document).ready(function() {
+            fetchData();
             $("#show_hide_password a").on('click', function(event) {
                 event.preventDefault();
                 if ($('#show_hide_password input').attr("type") == "text") {

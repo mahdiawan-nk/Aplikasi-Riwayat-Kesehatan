@@ -44,7 +44,7 @@ Route::group(['prefix' => 'panel-admin'], function () {
     });
     Route::get('/dashboard', function () {
         return view('dashboard');
-    })->middleware('checklogin');
+    });
     Route::group(['prefix' => 'master-karyawan','middleware' => 'checklogin'], function () {
         Route::get('/', function () {
             return view('karyawan.index');

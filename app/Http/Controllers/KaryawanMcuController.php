@@ -127,11 +127,11 @@ class KaryawanMcuController extends Controller
 
     public function showByKaryawan($karyawanMcu)
     {
-        $karyawanMcu = KaryawanMcu::where('id_karyawan', $karyawanMcu)->get();
+        $karyawanMcuData = KaryawanMcu::where('id_karyawan', $karyawanMcu)->get();
         $response = [
             'success' => true,
             'message' => 'Data Mcu Karyawan',
-            'data' => $karyawanMcu
+            'data' => $karyawanMcuData
         ];
         return response()->json($response, 200, [
             'Content-Type' => 'application/json;charset=UTF-8',

@@ -10,7 +10,6 @@
                                 <a class="nav-link" href="#">   <i class='bx bx-search'></i>
                                 </a>
                             </li>
-                            
                         </ul>
                     </div>
                     <div class="user-box dropdown">

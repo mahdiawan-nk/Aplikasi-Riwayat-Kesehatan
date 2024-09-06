@@ -69,7 +69,17 @@
                                                             class='bx bx-hide'></i></a>
                                                 </div>
                                             </div>
-
+                                            <div class="captcha-box d-flex flex-column">
+                                                <img src="" alt="" id="captcha"
+                                                    class="img-fluid w-25">
+                                                <a href="#" class="py-2 d-flex flex-row align-items-center"
+                                                    id="refresh-captcha"><i class="bx bx-refresh font-22"></i>Tukar
+                                                    Code</a>
+                                                <h6>Type The Code:</h6>
+                                                <input name="code" class="form-control" id="math-answer">
+                                                <small class="py-2 d-flex flex-row align-items-center fw-bold"
+                                                    id="message-captcha-valid"></small>
+                                            </div>
                                             <div class="col-12">
                                                 <div class="d-grid">
                                                     <button type="submit" class="btn btn-primary" id="btn-submit"><i
@@ -104,12 +114,60 @@
             }
         }
 
+        let capcthaAnswer = {
+            captcha: '',
+            _token: "{{ csrf_token() }}"
+        };
+
         let Users = {
             email: '',
             password: '',
             type: 'admin',
             _token: "{{ csrf_token() }}"
 
+        }
+
+        const captchaFetch = async () => {
+            try {
+                // Mengambil gambar CAPTCHA dari server
+                const response = await axios.get('/captcha/text-image', {
+                    responseType: 'blob' // Menetapkan responseType menjadi 'blob' untuk menangani data gambar
+                });
+
+                // Membuat URL objek dari data blob
+                const imageUrl = URL.createObjectURL(response.data);
+
+                // Mengatur atribut src dari elemen gambar dengan URL gambar
+                document.getElementById('captcha').src = imageUrl;
+            } catch (error) {
+                console.error('Error fetching CAPTCHA image:', error);
+            }
+        };
+
+        const validateCaptcha = async () => {
+
+            capcthaAnswer.captcha = document.getElementById('math-answer').value
+            try {
+                const response = await axios.post('/captcha/validate', capcthaAnswer);
+                if (response.data.success) {
+                    return true;
+                } else {
+                    Swal.fire({
+                        icon: "error",
+                        title: "Oops...",
+                        text: "Captcha tidak valid!",
+                    });
+                    return false;
+                }
+            } catch (error) {
+                console.log(error.response.data)
+                Swal.fire({
+                    icon: "error",
+                    title: "Oops...",
+                    text: error.response.data.message,
+                });
+                return false
+            }
         }
 
         const fetchLogin = async () => {
@@ -119,7 +177,7 @@
             btnSubmit.html('<i class="fa-solid fa-circle-notch fa-spin"></i> Loading...');
             try {
                 const response = await axios.post('/auth-admin/login', Users, headers);
-                window.location.href = '/auth-admin/verifikasi-otp';
+                window.location.href = '/panel-admin/dashboard';
                 console.log(response.data)
             } catch (error) {
                 if (error.response && error.response.status === 401) {
@@ -145,12 +203,21 @@
         }
 
         const init = () => {
-
+            captchaFetch();
             $('form#form-login').submit(async function(e) {
                 e.preventDefault();
                 Users.email = $('input#username').val();
                 Users.password = $('input#inputChoosePassword').val();
-                fetchLogin();
+                try {
+                    const captchaValid = await validateCaptcha();
+                    if (captchaValid) {
+                        fetchLogin();
+                    } else {
+                        console.log('Captcha tidak valid');
+                    }
+                } catch (error) {
+                    console.error('Error saat memvalidasi captcha', error);
+                }
             });
         }
 

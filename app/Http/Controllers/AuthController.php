@@ -155,7 +155,7 @@ class AuthController extends Controller
                 $success['role'] = 'admin';
 
                 // Kirim OTP ke email admin
-                $this->SendOtp($user->email);
+                // $this->SendOtp($user->email);
                 session($success);
                 return $this->sendResponse($success, 'Admin login successfully.');
             }

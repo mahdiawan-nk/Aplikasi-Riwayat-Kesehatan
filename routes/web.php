@@ -97,9 +97,9 @@ Route::get('/mcu-user', function () {
 // });
 
 // Route::get('/captcha/text', [CaptchaController::class, 'showTextCaptcha']);
-// Route::post('/captcha/validate', [CaptchaController::class, 'validateTextCaptcha']);
+Route::post('/captcha/validate', [CaptchaController::class, 'validateTextCaptcha']);
 
-// Route::get('/captcha/text-image', [CaptchaController::class, 'showTextCaptchaImage']);
+Route::get('/captcha/text-image', [CaptchaController::class, 'showTextCaptchaImage']);
 // //log-viewers
 // Route::get('log-viewers', [\Rap2hpoutre\LaravelLogViewer\LogViewerController::class, 'index']);
 

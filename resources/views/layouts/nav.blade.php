@@ -34,6 +34,21 @@
                 <div class="menu-title">Karyawan MCU</div>
             </a>
         </li>
+        <li class="menu-label">Pengaturan</li>
+        <li>
+            <a href="{{ url('') }}/panel-admin/managemen-user">
+                <div class="parent-icon"><i class='bx bxs-user'></i>
+                </div>
+                <div class="menu-title">Managemen User</div>
+            </a>
+        </li>
+        <li>
+            <a href="{{ url('') }}/panel-admin/setting-app">
+                <div class="parent-icon"><i class='bx bx-cog' ></i>
+                </div>
+                <div class="menu-title">Pengaturan Aplikasi</div>
+            </a>
+        </li>
     </ul>
     <!--end navigation-->
 </div>

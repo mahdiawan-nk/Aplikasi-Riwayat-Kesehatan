@@ -44,12 +44,12 @@ class CaptchaController extends Controller
         $textColor = imagecolorallocate($image, 56, 97, 57); // Hitam
         $lineColor = imagecolorallocate($image, 64, 64, 64); // Abu-abu
 
-        imagefilledrectangle($image, 0, 0, 120, 40, $background);
+        imagefilledrectangle($image, 0, 0, 125, 40, $background);
 
         // Menambahkan beberapa garis untuk keamanan
-        for ($i = 0; $i < 5; $i++) {
-            imageline($image, rand(0, 120), rand(0, 70), rand(0, 120), rand(0, 40), $lineColor);
-        }
+        // for ($i = 0; $i < 5; $i++) {
+        //     imageline($image, rand(0, 120), rand(0, 70), rand(0, 120), rand(0, 40), $lineColor);
+        // }
 
         // Menambahkan teks CAPTCHA
         imagettftext($image, 20, 0, 10, 30, $textColor, public_path('assets/fonts/arial.ttf'), $captchaText);

@@ -1,7 +1,5 @@
-<div class="row">
-    <div class="col-sm-3">
-    </div>
-    <div class="col-sm-6">
+<div class="row justify-content-center">
+    <div class="col-sm-12 col-md-8 col-lg-6">
         <div class="card border-top border-0 border-4 border-info" id="page-form-data" style="display: none">
             <form class="card-body" id="form-data" enctype="multipart/form-data">
                 <div class="border p-4 rounded">

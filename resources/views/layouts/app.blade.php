@@ -16,7 +16,8 @@
     <link href="{{ asset('') }}assets/css/pace.min.css" rel="stylesheet" />
     <script src="{{ asset('') }}assets/js/pace.min.js"></script>
     <!-- Bootstrap CSS -->
-    <link href="{{ asset('') }}assets/css/bootstrap.min.css" rel="stylesheet">
+    {{-- <link href="{{ asset('') }}assets/css/bootstrap.min.css" rel="stylesheet"> --}}
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/bootstrap/5.3.3/css/bootstrap.min.css" integrity="sha512-jnSuA4Ss2PkkikSOLtYs8BlYIeeIK1h99ty4YfvRPAlzr377vr3CXDb7sb7eEEBYjDtcYj+AjBH3FLv5uSJuXg==" crossorigin="anonymous" referrerpolicy="no-referrer" />
     <link href="{{ asset('') }}assets/css/app.css" rel="stylesheet">
     <link href="{{ asset('') }}assets/css/icons.css" rel="stylesheet">
 

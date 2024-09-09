@@ -1,3 +1,23 @@
+<style>
+    @media (max-width: 767.98px) {
+        .row {
+            text-align: center;
+        }
+
+        .d-flex {
+            display: block;
+            margin-bottom: 10px;
+        }
+
+        .d-flex>div {
+            margin: 0 auto;
+        }
+
+        .pagination {
+            justify-content: center;
+        }
+    }
+</style>
 <div class="row row-cols-1 row-cols-md-2 row-cols-lg-4 row-cols-xl-3 mb-2">
     <div class="col">
         <div class="d-flex align-items-center">
@@ -17,7 +37,7 @@
     <div class="col">
         <div class="d-flex align-items-center">
             <span class="me-2">Search</span>
-            <input type="search" class="form-control w-75" id="searchInput" placeholder="Search No Badge|Nama|TTL">
+            <input type="search" class="form-control w-75" id="searchInput" placeholder="Search">
         </div>
     </div>
     <div class="col">
@@ -25,7 +45,7 @@
             <div>
                 <nav aria-label="...">
                     <ul class="pagination pagination-sm" id="pagination-list">
-                        
+
                     </ul>
                 </nav>
             </div>

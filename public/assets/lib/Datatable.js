@@ -71,7 +71,7 @@ class DataTable {
     }
 
     renderData(data) {
-        const listData = data.data.karyawans;
+        const listData = data.data.data;
         if (listData.length < 1) {
             this.elmtTable.html(`<tr>
                 <td colspan="${this.columns.length}" class="text-center">

@@ -6,6 +6,11 @@ use App\Models\Karyawan;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Storage;
 use Illuminate\Support\Facades\Hash;
+use App\Exports\KaryawanTemplateExport;
+use Maatwebsite\Excel\Facades\Excel;
+use App\Imports\KaryawanImport;
+
+
 class KaryawanController extends Controller
 {
     /**
@@ -39,6 +44,7 @@ class KaryawanController extends Controller
             'success' => true,
             'message' => 'List karyawans',
             'data' => [
+                'data' => $karyawans->items(),
                 'karyawans' => $karyawans->items(),
                 'pagination' => [
                     'total' => $karyawans->total(),
@@ -80,7 +86,7 @@ class KaryawanController extends Controller
             'nama_istri_suami' => 'required',
             'no_hp_istri_suami' => 'required|integer',
             'foto' => 'required|mimes:jpg,png,jpeg|max:2048',
-            'email'=>'required|email|unique:karyawans,email'
+            'email' => 'required|email|unique:karyawans,email'
         ], [
             'no_badge.required' => 'Nomor badge wajib diisi.',
             'no_badge.unique' => 'Nomor badge sudah terdaftar.',
@@ -103,7 +109,7 @@ class KaryawanController extends Controller
         $path = $fotoKaryawans->store('foto-karyawans', 'public');
 
         $validate['foto'] = $path;
-        $validate['password'] = Hash::make(date('dmY',strtotime($validate['tgl_lahir'])));
+        $validate['password'] = Hash::make(date('dmY', strtotime($validate['tgl_lahir'])));
 
         $karyawan = Karyawan::create($validate);
         $response = [
@@ -165,7 +171,7 @@ class KaryawanController extends Controller
         $karyawan->no_hp_wa = $request->no_hp_wa;
         $karyawan->nama_istri_suami = $request->nama_istri_suami;
         $karyawan->no_hp_istri_suami = $request->no_hp_istri_suami;
-        $karyawan->password = Hash::make(date('dmY',strtotime($request->tgl_lahir)));
+        $karyawan->password = Hash::make(date('dmY', strtotime($request->tgl_lahir)));
         $karyawan->email = $request->email;
 
         if ($request->hasFile('foto')) {
@@ -219,5 +225,45 @@ class KaryawanController extends Controller
                 'message' => 'Gagal menghapus data karyawan: ' . $e->getMessage()
             ], 500); // Kode status 500 untuk internal server error
         }
+    }
+
+    public function downloadTemplate()
+    {
+        return Excel::download(new KaryawanTemplateExport, 'karyawan_template.xlsx');
+    }
+
+    public function importKaryawan(Request $request)
+    {
+        // Validate that the request contains a file and that it is an Excel file
+        $request->validate([
+            'excel_file' => 'required|mimes:xlsx,xls,csv',
+        ]);
+
+        try {
+            // Import the Excel file using the KaryawanImport class
+            $data = Excel::import(new KaryawanImport, $request->file('excel_file'));
+
+            // // Return a success message
+            // return response()->json([
+            //     'message' => 'File imported successfully',
+            // ]);
+            // $file = $request->file('excel_file');
+            // $data = Excel::toArray(new KaryawanImport, $file);
+
+            return response()->json([
+                'message' => 'File imported successfully',
+                'data'=>$data
+            ]);
+        } catch (\Exception $e) {
+            // Handle any errors during the import process
+            return response()->json([
+                'message' => 'Error importing file: ' . $e->getMessage(),
+            ], 500);
+        }
+    }
+
+    public function exportKaryawan(Request $request)
+    {
+        
     }
 }

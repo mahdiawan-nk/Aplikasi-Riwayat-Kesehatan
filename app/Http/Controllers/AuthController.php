@@ -188,7 +188,7 @@ class AuthController extends Controller
         $otp = rand(100000, 999999); // Generate a 6-digit OTP
         // Store OTP in Redis with a 5-minute expiration
         // Redis::setex('otp_' . $email, 600, $otp);
-        Cache::put('otp_'.$email, $otp, 600);
+        Cache::put('otp_' . $email, $otp, 600);
         // Send OTP by email
         Mail::to($email)->send(new SendOtpMail($otp));
     }
@@ -215,7 +215,7 @@ class AuthController extends Controller
             $user = Auth::guard('karyawan')->user();
         }
         $email = $user->email;
-    
+
         $otpKey = "otp_{$email}";
         // $storedOtp = Redis::get($otpKey);
         $storedOtp = Cache::get($otpKey);
@@ -311,6 +311,19 @@ class AuthController extends Controller
 
     //     return response()->json(['message' => 'Unauthorized'], 401);
     // }
+
+    public function showUsers()
+    {
+        // $users = User::find(3); // Ambil user berdasarkan ID
+        // $users->assignRole('Operator');
+        $user = User::with(['roles' => function ($query) {
+            $query->select('id', 'name');
+        }, 'roles.permissions' => function ($query) {
+            $query->select('id', 'name');
+        }])->get(); // Ambil user berdasarkan ID
+
+        return response()->json($user);
+    }
 }
 //1|CC0pYdrQeDy69EhGJDtWbdAie3LVXhyeqgf4DWrH
 //3|iUXodKLsN8b3P5hgoGeLcVshYpYXaHJt95q1ce39

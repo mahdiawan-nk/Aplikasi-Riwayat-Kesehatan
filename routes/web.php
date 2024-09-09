@@ -6,8 +6,10 @@ use Illuminate\Support\Facades\Mail;
 use App\Http\Controllers\AuthController;
 use App\Http\Controllers\KaryawanController;
 use App\Http\Controllers\KaryawanMcuController;
-
-
+use App\Http\Controllers\UsersController;
+use App\Http\Controllers\RolesController;
+use App\Http\Controllers\MedicalConditionController;
+use App\Http\Controllers\StatusFittoworkController;
 /*
 |--------------------------------------------------------------------------
 | Web Routes
@@ -39,6 +41,7 @@ Route::group(['prefix' => 'auth-user'], function () {
 });
 
 Route::group(['prefix' => 'panel-admin'], function () {
+    
     Route::get('/', function () {
         return view('authentication-operator');
     });
@@ -49,14 +52,40 @@ Route::group(['prefix' => 'panel-admin'], function () {
         Route::get('/', function () {
             return view('karyawan.index');
         });
+        Route::post('/import-karyawan', [KaryawanController::class, 'importKaryawan']);
         Route::resource('/karyawan', KaryawanController::class, ['except' => ['create', 'edit'], 'as' => 'master']);
     });
     Route::group(['prefix' => 'mcu-karyawan','middleware' => 'checklogin'], function () {
         Route::get('/', function () {
             return view('data-mcu.index');
         });
+        Route::get('/export-medical', [KaryawanMcuController::class, 'exportExcel']);
         Route::resource('/karyawan-mcu', KaryawanMcuController::class, ['except' => ['create', 'edit'], 'as' => 'master']);
     });
+
+    Route::group(['prefix' => 'managemen-user','middleware' => 'checklogin'], function () {
+        Route::get('/', function () {
+            return view('pengguna.index');
+        });
+        Route::resource('/users', UsersController::class, ['except' => ['create', 'edit'], 'as' => 'master']);
+    });
+    Route::group(['prefix' => 'group-user','middleware' => 'checklogin'], function () {
+        Route::get('/', function () {
+            return view('errors.comming_soon');
+        });
+        Route::get('permissions', [RolesController::class, 'getPermissions']);
+        Route::resource('/roles', RolesController::class, ['except' => ['create', 'edit'], 'as' => 'master']);
+    });
+    Route::group(['prefix' => 'setting-app','middleware' => 'checklogin'], function () {
+        Route::get('/', function () {
+            return view('errors.comming_soon');
+        });
+    });
+
+    Route::resource('/medical-condition',  MedicalConditionController::class, ['except' => ['create', 'edit'], 'as' => 'master']);
+    Route::resource('/fitwork-condition',  StatusFittoworkController::class, ['except' => ['create', 'edit'], 'as' => 'master']);
+    Route::get('/download-karyawan-template', [KaryawanController::class, 'downloadTemplate'])->name('karyawan.downloadTemplate');
+
 });
 
 Route::post('/verify-otp', [AuthController::class, 'verifyOtp']);

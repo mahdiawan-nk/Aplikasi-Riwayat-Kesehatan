@@ -119,6 +119,25 @@
                                         placeholder="Tahun MCU Dilakukan">
                                 </div>
                             </div>
+                            <div class="row mb-3">
+                                <label for="" class="col-sm-3 col-form-label">Medical Condition</label>
+                                <div class="col-sm-9" id="list-medical-condition">
+                                    
+                                </div>
+                            </div>
+                            <div class="row mb-3">
+                                <label for="" class="col-sm-3 col-form-label">Fit Work Condition</label>
+                                <div class="col-sm-9" id="list-fitwork-condition">
+                                    
+                                </div>
+                            </div>
+                            <div class="row mb-3">
+                                <label for="hasil_mcu" class="col-sm-3 col-form-label">Hasil MCU</label>
+                                <div class="col-sm-9">
+                                    <textarea name="hasil_mcu" id="hasil_mcu" cols="30" rows="10" class="form-control"></textarea>
+
+                                </div>
+                            </div>
                             <div class="row">
                                 <label class="col-sm-3 col-form-label"></label>
                                 <div class="col-sm-9">

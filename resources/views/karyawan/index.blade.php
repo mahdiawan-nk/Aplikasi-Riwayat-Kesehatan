@@ -24,8 +24,8 @@
                     <div class="btn-group" id="list-action-btn">
                         <button type="button" class="btn btn-primary btn-sm" id="tambah-data-karyawan"> <i
                                 class="bx bx-plus"></i>Tambah Data Karyawan</button>
-                        <button type="button" class="btn btn-secondary btn-sm" hidden id="import-data-karyawan"> <i
-                                class="bx bx-import"></i>Import Data Karyawan</button>
+                        <button type="button" class="btn btn-secondary btn-sm" id="import-data-karyawan"
+                            onclick="importDataKaryawan()"> <i class="bx bx-import"></i>Import Data Karyawan</button>
                         <button type="button" class="btn btn-dark btn-sm" id="refreshButton"> <i
                                 class="bx bx-refresh"></i>Refresh</button>
                     </div>
@@ -120,7 +120,7 @@
             no_hp_wa: null,
             nama_istri_suami: null,
             no_hp_istri_suami: null,
-            email:null,
+            email: null,
             _token: "{{ csrf_token() }}"
         }
 
@@ -330,7 +330,9 @@
                 uidData = id;
                 console.log(response.data)
 
-                $('#preview-image').attr('src', '{{ asset('storage') }}/' + foto)
+                $('#preview-image').attr('src', foto ? '{{ asset('storage') }}/' + foto :
+                    'https://dummyimage.com/160x215/000/fff.png&text=foto+user'
+                ) //https://dummyimage.com/160x215/000/fff.png&text=foto+user
                 $('#no_badge').val(no_badge);
                 $('#nama_karyawan').val(nama_karyawan);
                 $('#tempat_lahir').val(tempat_lahir);
@@ -405,38 +407,89 @@
 
         }
 
-        const importDataKaryawan = () => {
-            btnSeller.on('click', async function() {
-                const {
-                    value: file
-                } = await Swal.fire({
-                    title: "Select File",
-                    input: "file",
-                    html: '<a href="#" class="btn-link">Download template</a>',
-                    inputAttributes: {
-                        "accept": "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet, application/vnd.ms-excel",
-                        "aria-label": "Upload your profile picture"
-                    },
-                    showCancelButton: true,
-                    inputValidator: (value) => {
-                        if (!value) {
-                            return 'You need to select an file!';
-                        }
-                        return null;
+        const selectExcelFile = async () => {
+            // Display file selection dialog using SweetAlert2
+            const {
+                value: file
+            } = await Swal.fire({
+                title: "Select File",
+                input: "file",
+                html: '<a href="{{ url('/panel-admin/download-karyawan-template') }}" class="btn-link">Download template</a>',
+                inputAttributes: {
+                    "accept": "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet, application/vnd.ms-excel",
+                    "aria-label": "Upload your Excel file"
+                },
+                showCancelButton: true,
+                inputValidator: (value) => {
+                    if (!value) {
+                        return 'You need to select a file!';
                     }
-                });
-                if (file) {
-                    importFileExcel = file
-
-                    console.log(importFileExcel)
+                    return null;
                 }
             });
+
+            // Return the selected file if any
+            if (file) {
+                return file;
+            }
+
+            // Return null if no file was selected
+            return null;
+        };
+
+        const importDataKaryawan = async () => {
+            const importFileExcel = await selectExcelFile();
+
+            if (importFileExcel) {
+                const formData = new FormData();
+                formData.append('excel_file', importFileExcel);
+
+                try {
+                    // Show loading spinner during file upload
+                    Swal.fire({
+                        title: 'Uploading...',
+                        text: 'Please wait while we upload the file',
+                        showConfirmButton: false,
+                        allowOutsideClick: false,
+                        didOpen: () => {
+                            Swal.showLoading();
+                        }
+                    });
+
+                    // Send file via Axios to Laravel backend
+                    const response = await axios.post('{{ url('/panel-admin/master-karyawan/import-karyawan') }}',
+                        formData, {
+                            headers: {
+                                'Content-Type': 'multipart/form-data',
+                            }
+                        });
+
+                    // Display success message on successful upload
+                    Swal.fire({
+                        title: 'Success!',
+                        text: 'File has been imported successfully.',
+                        icon: 'success',
+                    });
+                    console.log(response.data);
+                    dataTable.refreshData();
+                } catch (error) {
+                    // Handle error response
+                    Swal.fire({
+                        title: 'Error!',
+                        text: error.response?.data?.message || 'An error occurred during file upload.',
+                        icon: 'error',
+                    });
+                    console.error(error);
+                }
+            }
+
+
         }
 
         const init = () => {
             tambahDataKaryawan();
             CancelButton();
-            importDataKaryawan();
+            // importDataKaryawan();
 
             $("#tgl_lahir").flatpickr({
                 enableTime: false,

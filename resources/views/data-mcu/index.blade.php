@@ -17,6 +17,7 @@
             cursor: pointer;
         }
     </style>
+    <link href="https://cdn.jsdelivr.net/npm/summernote@0.8.18/dist/summernote-lite.min.css" rel="stylesheet">
 @endsection
 
 @section('wrapper')
@@ -56,11 +57,12 @@
                                     <th>No</th>
                                     <th>No Badge</th>
                                     <th>Nama</th>
-                                    <th>Age</th>
                                     <th>Tahun MCU</th>
                                     <th>Riwayat Kesehatan</th>
                                     <th>Riwayat Konsumsi Obat</th>
                                     <th>SKJ</th>
+                                    <th>Status Fit Work</th>
+                                    <th>Medis Kondisi</th>
                                     <th>File MCU</th>
                                     <th>Action</th>
                                 </tr>
@@ -73,11 +75,12 @@
                                     <th>No</th>
                                     <th>No Badge</th>
                                     <th>Nama</th>
-                                    <th>Age</th>
                                     <th>Tahun MCU</th>
                                     <th>Riwayat Kesehatan</th>
                                     <th>Riwayat Konsumsi Obat</th>
                                     <th>SKJ</th>
+                                    <th>Status Fit Work</th>
+                                    <th>Medis Kondisi</th>
                                     <th>File MCU</th>
                                     <th>Action</th>
                                 </tr>
@@ -94,6 +97,7 @@
             </div>
 
             @include('data-mcu.form')
+            {{-- @include('data-mcu.detail') --}}
         </div>
     </div>
     <!--end page wrapper -->
@@ -102,6 +106,7 @@
 @section('script')
     <script src="{{ asset('') }}assets/lib/DataTable.js"></script>
     <script src="{{ asset('') }}assets/lib/FormValidate.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/summernote@0.8.18/dist/summernote-lite.min.js"></script>
 
     <script>
         const btnTambah = $('#tambah-data-karyawan');
@@ -123,6 +128,9 @@
             riwayat_konsumsi_obat: null,
             score_kardiovaskular_jakarta: null,
             tahun_mcu: null,
+            hasil_mcu: null,
+            medical_condition: null,
+            fitwork_condition: null,
             _token: '{{ csrf_token() }}',
         }
 
@@ -158,13 +166,6 @@
                     }
                 },
                 {
-                    key: 'usia',
-                    label: 'Usia',
-                    render: (value, item) => {
-                        return `${value} ${value > 1 ? 'Tahun' : '0 Tahun'}`
-                    }
-                },
-                {
                     key: 'tahun_mcu',
                     label: 'Tahun MCU'
                 },
@@ -190,6 +191,23 @@
                     }
                 },
                 {
+                    key: 'status_fit_to_work',
+                    label: 'Status Fit Work',
+                    render: (value) => {
+                        return `<span class="text-wrap" style="width: 15rem;"> ${value.name_status}</span>`
+                    }
+                },
+                {
+                    key: 'medical_condition',
+                    label: 'Medical Condition',
+                    render: (value) => {
+                        if(value.length == 0) return `<span class="text-wrap d-block" style="width: 15rem;"> - </span>`
+                        return value.map((item) => {
+                            return `<span class="text-wrap d-block" style="width: 15rem;"> ${item.name}</span>`
+                        }).join('')
+                    }
+                },
+                {
                     key: 'file_mcu',
                     label: 'File MCU',
                     render: (value, item) => {
@@ -201,9 +219,10 @@
                     label: 'Action',
                     render: (value, item) => {
                         return `<div class="d-flex order-actions">
-                        <a href="javascript:;" onclick="editDataMcu(${item.id})"><i class="bx bx-edit-alt"></i></a>
-                        <a href="javascript:;" class="ms-4 bg-danger text-white" onclick="deleteDataMcu(${item.id})"><i class="bx bx-trash-alt"></i></a>
-                    </div>`
+                                    <a href="javascript:;" onclick="editDataMcu(${item.id})" class="bg-secondary text-white" hidden><i class="fa-solid fa-eye fa-xs"></i></a>
+                                    <a href="javascript:;" onclick="editDataMcu(${item.id})" class="ms-4"><i class="bx bx-edit-alt"></i></a>
+                                    <a href="javascript:;" class="ms-4 bg-danger text-white" onclick="deleteDataMcu(${item.id})"><i class="bx bx-trash-alt"></i></a>
+                                </div>`
                     }
                 }
 
@@ -214,7 +233,7 @@
 
         const searchDataKaryawan = async (value) => {
             try {
-                const response = await axios.get('/panel-admin/master-karyawan/karyawan',headers, {
+                const response = await axios.get('/panel-admin/master-karyawan/karyawan', headers, {
                     params: {
                         search: value
                     }
@@ -249,7 +268,7 @@
 
         const showDataKaryawan = async (id) => {
             try {
-                const response = await axios.get('/panel-admin/master-karyawan/karyawan/' + id,headers);
+                const response = await axios.get('/panel-admin/master-karyawan/karyawan/' + id, headers);
                 const data = response.data.data;
                 DataMcuKaryawan.id_karyawan = data.id;
                 $('#searchResults').empty().addClass('d-none');
@@ -280,12 +299,21 @@
                 return
             }
 
+            const selectedMEdicalCondition = $('#list-medical-condition input[type="checkbox"]:checked')
+                .map(function() {
+                    return $(this).val(); // Get the value attribute which is the ID
+                }).get();
+
             DataMcuKaryawan.tahun_mcu = $('#tahun_mcu').val();
             DataMcuKaryawan.riwayat_kesehatan = $('#riwayat_kesehatan').val();
             DataMcuKaryawan.riwayat_konsumsi_obat = $('#riwayat_konsumsi_obat').val();
             DataMcuKaryawan.file_mcu = $('#file_mcu').prop('files')[0];
             DataMcuKaryawan.tahun_mcu = $('#tahun_mcu').val();
             DataMcuKaryawan.score_kardiovaskular_jakarta = $('input[name="score_kardiovaskular_jakarta"]:checked')
+                .val();
+            DataMcuKaryawan.hasil_mcu = $('#hasil_mcu').val();
+            DataMcuKaryawan.medical_condition = selectedMEdicalCondition;
+            DataMcuKaryawan.fitwork_condition = $('#list-fitwork-condition input[name="fitwork_condition"]:checked')
                 .val();
             try {
                 const response = await axios.post(baseUrl, DataMcuKaryawan, headers);
@@ -298,8 +326,9 @@
                     showConfirmButton: false,
                     timer: 2500
                 });
-                cancelForm()
-                dataTable.refreshData();
+                // cancelForm()
+                // dataTable.refreshData();
+                console.log(response.data)
             } catch (error) {
                 if (error.response && error.response.status === 422) {
                     const errors = error.response.data.errors;
@@ -324,7 +353,10 @@
         }
 
         const updateDataMcu = async () => {
-
+            const selectedMEdicalCondition = $('#list-medical-condition input[type="checkbox"]:checked')
+                .map(function() {
+                    return $(this).val(); // Get the value attribute which is the ID
+                }).get();
             DataMcuKaryawan.tahun_mcu = $('#tahun_mcu').val();
             DataMcuKaryawan.riwayat_kesehatan = $('#riwayat_kesehatan').val();
             DataMcuKaryawan.riwayat_konsumsi_obat = $('#riwayat_konsumsi_obat').val();
@@ -332,9 +364,13 @@
             DataMcuKaryawan.tahun_mcu = $('#tahun_mcu').val();
             DataMcuKaryawan.score_kardiovaskular_jakarta = $('input[name="score_kardiovaskular_jakarta"]:checked')
                 .val();
+            DataMcuKaryawan.hasil_mcu = $('#hasil_mcu').val();
+            DataMcuKaryawan.medical_condition = selectedMEdicalCondition;
+            DataMcuKaryawan.fitwork_condition = $('#list-fitwork-condition input[name="fitwork_condition"]:checked').val()
             DataMcuKaryawan._method = 'PUT';
+            console.log(DataMcuKaryawan)
             try {
-                const response = await axios.post(baseUrl+'/' + uidData, DataMcuKaryawan, headers);
+                const response = await axios.post(baseUrl + '/' + uidData, DataMcuKaryawan, headers);
                 Swal.fire({
                     toast: true,
                     position: "top-end",
@@ -382,7 +418,7 @@
             }).then(async (result) => {
                 if (result.isConfirmed) {
                     try {
-                        const response = await axios.delete(baseUrl + '/' + id,headers);
+                        const response = await axios.delete(baseUrl + '/' + id, headers);
                         Swal.fire({
                             toast: true,
                             position: "top-end",
@@ -412,10 +448,18 @@
             pageListData.hide()
             listBtnAction.hide()
             pageFormData.show()
+            listMedicalCondition().then((data) => {
+                $('#list-medical-condition').empty();
+                $('#list-medical-condition').append(data);
+            })
+            listFitWorkCondition().then((data) => {
+                $('#list-fitwork-condition').empty();
+                $('#list-fitwork-condition').append(data);
+            })
         }
         const editDataMcu = async (id) => {
             try {
-                const response = await axios.get(baseUrl + '/' + id,headers);
+                const response = await axios.get(baseUrl + '/' + id, headers);
                 const {
                     id_karyawan,
                     riwayat_kesehatan,
@@ -423,16 +467,28 @@
                     score_kardiovaskular_jakarta,
                     tahun_mcu,
                     file_mcu,
+                    hasil_mcu,
+                    status_fit_to_work,
+                    medical_condition
                 } = response.data.data;
                 uidData = id;
                 showDataKaryawan(response.data.data.id_karyawan);
                 DataMcuKaryawan.file_mcu = file_mcu;
                 $('#no_badge').attr('disabled', true);
-                $('#riwayat_kesehatan').val(riwayat_kesehatan);
-                $('#riwayat_konsumsi_obat').val(riwayat_konsumsi_obat);
-                // $('#score_kardiovaskular_jakarta').val(score_kardiovaskular_jakarta);
-                $('input[name="score_kardiovaskular_jakarta"][value="'+score_kardiovaskular_jakarta+'"]').prop('checked', true);
+                $('#riwayat_kesehatan').summernote('code', riwayat_kesehatan);
+                $('#riwayat_konsumsi_obat').summernote('code', riwayat_konsumsi_obat);
+                $('#hasil_mcu').summernote('code', hasil_mcu);
+                $('input[name="score_kardiovaskular_jakarta"][value="' + score_kardiovaskular_jakarta + '"]').prop(
+                    'checked', true);
                 $('#tahun_mcu').val(tahun_mcu);
+                listMedicalCondition(medical_condition).then((data) => {
+                    $('#list-medical-condition').empty();
+                    $('#list-medical-condition').append(data);
+                })
+                listFitWorkCondition(status_fit_to_work).then((data) => {
+                    $('#list-fitwork-condition').empty();
+                    $('#list-fitwork-condition').append(data);
+                })
                 modeForm = 'update';
                 uidData = id;
                 pageListData.hide()
@@ -450,8 +506,46 @@
             pageFormData.hide()
         }
 
+        const listMedicalCondition = async (dataMedical = null) => {
+            try {
+                const response = await axios.get('{{ url('/panel-admin/medical-condition') }}', headers);
+                const data = response.data.data;
+                console.log(dataMedical)
+                const list = data.map((item) => {
+                    const isChecked = dataMedical.includes(item.id) ? 'checked' : '';
+                    return (`<div class="form-check form-check-success me-2">
+                                        <input class="form-check-input" type="checkbox" ${isChecked} name="medical_condition[]" value="${item.id}"
+                                            id="medical-condition-${item.id}">
+                                        <label class="form-check-label" for="medical-condition-${item.id}">
+                                            ${item.name}
+                                        </label>
+                                    </div>`)
+                }).join('');
+                return list
+            } catch (error) {
+                console.log(error)
+            }
+        }
 
-
+        const listFitWorkCondition = async (status = null) => {
+            try {
+                const response = await axios.get('{{ url('/panel-admin/fitwork-condition') }}', headers);
+                const data = response.data.data;
+                console.log(status)
+                const list = data.map((item) => {
+                    const checked = (item.id == status) ? 'checked' : '';
+                    return (`<div class="form-check">
+								<input class="form-check-input" ${checked} type="radio" name="fitwork_condition" value="${item.id}" id="fitwork${item.id}">
+								<label class="form-check-label" for="fitwork${item.id}">
+                                ${item.name_status}
+								</label>
+							  </div>`)
+                }).join('');
+                return list
+            } catch (error) {
+                console.log(error)
+            }
+        }
         const init = () => {
             $('#searchInput').on('input', function() {
                 dataTable.setSearchTerm(this.value);
@@ -465,6 +559,18 @@
             $('#refreshButton').on('click', function() {
                 console.log('refresh button clicked');
                 dataTable.refreshData();
+            });
+
+            $('#riwayat_kesehatan, #riwayat_konsumsi_obat,#hasil_mcu').summernote({
+                placeholder: 'Enter your content here',
+                tabsize: 2,
+                height: 300,
+                toolbar: [
+                    ['style', ['style']],
+                    ['font', ['bold', 'underline', 'clear']],
+                    ['para', ['ul', 'ol', 'paragraph']],
+
+                ]
             });
 
 
@@ -490,6 +596,16 @@
                         required: true,
                         digits: true
                     },
+                    
+                    // 'medical_condition[]': {
+                    //     required: true
+                    // },
+                    fitwork_condition: {
+                        required: true
+                    },
+                    hasil_mcu: {
+                        required: true
+                    }
 
                 },
                 messages: {
@@ -497,17 +613,27 @@
                         required: "No Badge is required",
                     },
                     riwayat_kesehatan: {
-                        required: "Riwayat Kesehatan is",
+                        required: "Riwayat Kesehatan is Required",
                     },
                     riwayat_konsumsi_obat: {
                         required: "Riwayat Konsumsi Obat is required",
                     },
                     score_kardiovaskular_jakarta: {
-                        required: "Tanggal Lahir is required",
+                        required: "Score Kardiovaskular is required",
                     },
                     tahun_mcu: {
                         required: "Tahun MCU is required",
                     },
+                    
+                    // 'medical_condition[]': {
+                    //     required: "Medical Condition is required",
+                    // },
+                    fitwork_condition: {
+                        required: "Fitwork Condition is required",
+                    },
+                    hasil_mcu: {
+                        required: "Reason MCU is required",
+                    }
                 },
                 errorClass: 'is-invalid',
                 submitHandler: function(form) {

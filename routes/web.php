@@ -60,6 +60,7 @@ Route::group(['prefix' => 'panel-admin'], function () {
             return view('data-mcu.index');
         });
         Route::get('/export-medical', [KaryawanMcuController::class, 'exportExcel']);
+        Route::get('/show-medical', [KaryawanMcuController::class, 'getDataMcu']);
         Route::resource('/karyawan-mcu', KaryawanMcuController::class, ['except' => ['create', 'edit'], 'as' => 'master']);
     });
 

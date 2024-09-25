@@ -40,6 +40,8 @@
                     <div class="btn-group" id="list-action-btn">
                         <button type="button" class="btn btn-primary btn-sm" id="tambah-data-karyawan"
                             onclick="tambahDataMcu()"> <i class="bx bx-plus"></i>Tambah Data MCU</button>
+                        <button type="button" class="btn btn-secondary btn-sm" id="tambah-data-karyawan"
+                            onclick="exportExcel()"> <i class='bx bx-export'></i>Export Data MCU</button>
                         <button type="button" class="btn btn-dark btn-sm" id="refreshButton"> <i
                                 class="bx bx-refresh"></i>Refresh</button>
                     </div>
@@ -201,7 +203,8 @@
                     key: 'medical_condition',
                     label: 'Medical Condition',
                     render: (value) => {
-                        if(value.length == 0) return `<span class="text-wrap d-block" style="width: 15rem;"> - </span>`
+                        if (value.length == 0)
+                            return `<span class="text-wrap d-block" style="width: 15rem;"> - </span>`
                         return value.map((item) => {
                             return `<span class="text-wrap d-block" style="width: 15rem;"> ${item.name}</span>`
                         }).join('')
@@ -233,13 +236,14 @@
 
         const searchDataKaryawan = async (value) => {
             try {
-                const response = await axios.get('/panel-admin/master-karyawan/karyawan', headers, {
+                const response = await axios.get('/panel-admin/master-karyawan/karyawan', {
+                    headers: headers.headers,
                     params: {
                         search: value
                     }
                 });
 
-                let filteredData = response.data.data.karyawans;
+                let filteredData = response.data.data.data;
                 $('#searchResults').empty().addClass('d-none'); // Kosongkan hasil pencarian sebelumnya
 
                 if (filteredData.length > 0) {
@@ -326,9 +330,9 @@
                     showConfirmButton: false,
                     timer: 2500
                 });
-                // cancelForm()
-                // dataTable.refreshData();
-                console.log(response.data)
+                cancelForm()
+                dataTable.refreshData();
+                // console.log(response.data)
             } catch (error) {
                 if (error.response && error.response.status === 422) {
                     const errors = error.response.data.errors;
@@ -366,7 +370,8 @@
                 .val();
             DataMcuKaryawan.hasil_mcu = $('#hasil_mcu').val();
             DataMcuKaryawan.medical_condition = selectedMEdicalCondition;
-            DataMcuKaryawan.fitwork_condition = $('#list-fitwork-condition input[name="fitwork_condition"]:checked').val()
+            DataMcuKaryawan.fitwork_condition = $('#list-fitwork-condition input[name="fitwork_condition"]:checked')
+                .val()
             DataMcuKaryawan._method = 'PUT';
             console.log(DataMcuKaryawan)
             try {
@@ -445,6 +450,7 @@
         const tambahDataMcu = () => {
             modeForm = 'create';
             uidData = null;
+            $('#form-data')[0].reset()
             pageListData.hide()
             listBtnAction.hide()
             pageFormData.show()
@@ -457,6 +463,7 @@
                 $('#list-fitwork-condition').append(data);
             })
         }
+
         const editDataMcu = async (id) => {
             try {
                 const response = await axios.get(baseUrl + '/' + id, headers);
@@ -506,7 +513,156 @@
             pageFormData.hide()
         }
 
-        const listMedicalCondition = async (dataMedical = null) => {
+        const exportExcel = () => {
+            Swal.fire({
+                allowOutsideClick: false,
+                allowEscapeKey: false,
+                backdrop: false,
+                width: '35%',
+                title: 'Select Year Range',
+                html: '<label for="startYear">Start Year</label>' +
+                    '<input id="startYear" class="swal2-input" placeholder="Start Year" type="number" min="2000" max="2030" value="' +
+                    new Date().getFullYear() + '">' +
+                    '<label for="endYear">End Year</label>' +
+                    '<input id="endYear" class="swal2-input" placeholder="End Year" type="number" min="2000" max="2030" value="' +
+                    new Date().getFullYear() + '">',
+                confirmButtonText: 'Download',
+                focusConfirm: false,
+                showCancelButton: true,
+                preConfirm: () => {
+                    const startYear = parseInt(Swal.getPopup().querySelector('#startYear').value);
+                    const endYear = parseInt(Swal.getPopup().querySelector('#endYear').value);
+
+                    // Validasi range tahun
+                    if (!startYear || !endYear || startYear > endYear) {
+                        Swal.showValidationMessage('Please enter a valid year range');
+                        return null;
+                    }
+
+                    // Validasi jika range lebih dari 5 tahun
+                    if (endYear - startYear > 5) {
+                        Swal.showValidationMessage('The range of years cannot exceed 5 years');
+                        return null;
+                    }
+
+                    return {
+                        startYear,
+                        endYear
+                    };
+                }
+            }).then(async (result) => {
+                if (result.isConfirmed) {
+                    // Memulai proses download setelah validasi
+                    const {
+                        startYear,
+                        endYear
+                    } = result.value;
+
+                    // SweetAlert progress bar
+                    Swal.fire({
+                        title: 'Downloading...',
+                        html: 'Please wait while we process your request.',
+                        allowOutsideClick: false,
+                        didOpen: () => {
+                            Swal.showLoading();
+                        }
+                    });
+
+                    // try {
+                    //     // Menggunakan axios untuk mengirimkan permintaan download
+                    //     const response = await axios({
+                    //         url: `{{ url('panel-admin/mcu-karyawan/export-medical') }}?start_year=${startYear}&end_year=${endYear}`,
+                    //         method: 'GET',
+                    //         responseType: 'blob', // Penting untuk menerima file sebagai blob
+                    //         headers: {
+                    //             'Content-Type': 'application/json',
+                    //             'Accept': 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet'
+                    //         }
+                    //     });
+                    //     console.log(response)
+                    //     // Buat URL untuk Blob yang diterima
+                    //     const blob = new Blob([response.data], {
+                    //         type: 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet'
+                    //     });
+                    //     const downloadUrl = URL.createObjectURL(blob);
+                    //     const a = document.createElement('a');
+                    //     a.href = downloadUrl;
+                    //     a.download = `MCU_Data_${startYear}_${endYear}.xlsx`;
+                    //     document.body.appendChild(a);
+                    //     a.click();
+                    //     a.remove();
+                    //     URL.revokeObjectURL(downloadUrl);
+
+                    //     // SweetAlert success setelah selesai download
+                    //     Swal.fire({
+                    //         title: 'Success!',
+                    //         text: 'Your data has been downloaded.',
+                    //         icon: 'success',
+                    //         confirmButtonText: 'OK'
+                    //     });
+                    // } catch (error) {
+                    //     console.log(error)
+                    //     // Menangani error jika gagal
+                    //     Swal.fire({
+                    //         title: 'Error!',
+                    //         text: 'There was a problem downloading your data.',
+                    //         icon: 'error',
+                    //         confirmButtonText: 'OK'
+                    //     });
+                    // }
+
+                    axios.get(
+                        `{{ url('panel-admin/mcu-karyawan/export-medical') }}?start_year=${startYear}&end_year=${endYear}`, {
+                            headers: {
+                                'Content-Type': 'application/json',
+                                // 'Accept': 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet'
+                            }
+                        }).then(response => {
+                            // console.log(response.data)
+                        if (!response.data.success) {
+                            // Show SweetAlert for no data
+                            Swal.fire({
+                                title: 'No Data Found',
+                                text: response.data.message,
+                                icon: 'warning',
+                                confirmButtonText: 'OK'
+                            });
+                        } else {
+                            // Proceed with downloading the Excel file if data exists
+                            // const blob = new Blob([response.data], {
+                            //     type: 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet'
+                            // });
+                            // const url = window.URL.createObjectURL(blob);
+                            // const a = document.createElement('a');
+                            // a.href = url;
+                            // a.download =
+                            // 'MCU_Data_${startYear}_${endYear}.xlsx'; // set a filename for the downloaded file
+                            // document.body.appendChild(a);
+                            // a.click();
+                            // a.remove();
+                            window.location.href = '{{ asset("storage") }}/'+response.data.filePath;
+                            Swal.fire({
+                                title: 'Success',
+                                text: 'Data has been downloaded.',
+                                icon: 'success',
+                                confirmButtonText: 'OK'
+                            });
+                        }
+                    }).catch(error => {
+                        console.error('There was an error exporting the data!', error);
+                        Swal.fire({
+                            title: 'Error',
+                            text: 'There was an error exporting the data.',
+                            icon: 'error',
+                            confirmButtonText: 'OK'
+                        });
+                    });
+                }
+            });
+
+        }
+
+        const listMedicalCondition = async (dataMedical = []) => {
             try {
                 const response = await axios.get('{{ url('/panel-admin/medical-condition') }}', headers);
                 const data = response.data.data;
@@ -596,7 +752,7 @@
                         required: true,
                         digits: true
                     },
-                    
+
                     // 'medical_condition[]': {
                     //     required: true
                     // },
@@ -624,7 +780,7 @@
                     tahun_mcu: {
                         required: "Tahun MCU is required",
                     },
-                    
+
                     // 'medical_condition[]': {
                     //     required: "Medical Condition is required",
                     // },

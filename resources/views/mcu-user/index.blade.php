@@ -308,7 +308,7 @@
                 const viewList = data.map((item) => {
                     return `
                         <a href="javascript:;" style="cursor: context-menu"
-                                                        class="list-group-item list-group-item-action "
+                                                        class="list-group-item list-group-item-action mb-3"
                                                         aria-current="true">
                                                         <div class="d-flex w-100 justify-content-between">
                                                             <h5 class="mb-1">Periode MCU : ${item.tahun_mcu}</h5>
@@ -331,6 +331,9 @@
                                                             <h6>Score Kardiovaskular Jakarta :</h6>
                                                             <p class="mb-1">${item.score_kardiovaskular_jakarta}
                                                             </p>
+                                                        </div>
+                                                        <div class="d-flex flex-column">
+                                                            <button onclick="window.location.href='{{ asset('storage') }}/${item.file_mcu}'" class="btn btn-sm btn-primary">Download File MCU</button>
                                                         </div>
                                                     </a>
                     `

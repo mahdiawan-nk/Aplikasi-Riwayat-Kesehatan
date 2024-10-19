@@ -18,8 +18,16 @@
         crossorigin="anonymous" referrerpolicy="no-referrer" />
     <link href="{{ asset('') }}assets/css/app.css" rel="stylesheet">
     <link href="{{ asset('') }}assets/css/icons.css" rel="stylesheet">
-    <title>Dashtreme - Multipurpose Bootstrap5 Admin Template</title>
+    <title>EHR || LOGIN</title>
     <style>
+        .bg-login {
+            background-image: url("{{ asset('') }}static-file/bg-login-2.jpg");
+            background-size: cover;
+            background-position: center;
+            background-repeat: no-repeat;
+            background-attachment: fixed;
+        }
+
         .captcha-box {
             border-radius: 5px;
             border: 1px solid;
@@ -41,7 +49,7 @@
                 <div class="row row-cols-1 row-cols-lg-2 row-cols-xl-3">
                     <div class="col mx-auto">
                         <div class="mb-4 text-center">
-                            <img src="{{ asset('') }}assets/images/logo-1.png" width="180" alt="" />
+                            <img src="{{ asset('static-file/logo-2.png') }}" width="180" alt="" />
                         </div>
                         <div class="card">
                             <div class="card-body">

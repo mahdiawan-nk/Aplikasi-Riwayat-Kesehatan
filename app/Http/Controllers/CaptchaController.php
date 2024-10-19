@@ -19,7 +19,7 @@ class CaptchaController extends Controller
         Session::put('math_captcha', $answer);
 
         return response()->json([
-            'question' => "What is $num1 + $num2?",
+            'question' => "Hitung  Penjumlahan Antara $num1 + $num2?",
         ]);
     }
 
@@ -121,10 +121,11 @@ class CaptchaController extends Controller
         $correctAnswer = Session::get('math_captcha');
 
         if ($answer == $correctAnswer) {
-            return response()->json(['message' => 'CAPTCHA valid'], 200);
+            return response()->json(['success'=> true,'message' => 'CAPTCHA valid'], 200);
         } else {
-            return response()->json(['message' => 'CAPTCHA invalid'], 200);
+            return response()->json(['success'=> true,'message' => 'CAPTCHA invalid','captcha' => $captcha,'correctCaptcha' => $correctCaptcha], 400);
         }
+
     }
 
     // Validasi CAPTCHA teks

@@ -173,7 +173,7 @@ class AuthController extends Controller
                 $success['role'] = 'karyawan';
 
                 // Kirim OTP ke email karyawan
-                $this->SendOtp($karyawan->email);
+                // $this->SendOtp($karyawan->email);
                 session($success);
                 return $this->sendResponse($success, 'User login successfully.');
             }

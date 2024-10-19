@@ -15,8 +15,16 @@
     <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@400;500&display=swap" rel="stylesheet">
     <link href="assets/css/app.css" rel="stylesheet">
     <link href="assets/css/icons.css" rel="stylesheet">
-    <title>Dashtreme - Multipurpose Bootstrap5 Admin Template</title>
+    <title>EHR || LOGIN</title>
     <style>
+        .bg-login {
+            background-image: url("{{ asset('') }}static-file/bg-login-2.jpg");
+            background-size: cover;
+            background-position: center;
+            background-repeat: no-repeat;
+            background-attachment: fixed;
+        }
+
         .captcha-box {
             border-radius: 5px;
             border: 1px solid;
@@ -38,7 +46,7 @@
                 <div class="row row-cols-1 row-cols-lg-2 row-cols-xl-3">
                     <div class="col mx-auto">
                         <div class="mb-4 text-center">
-                            <img src="assets/images/logo-1.png" width="180" alt="" />
+                            <img src="{{ asset('static-file/logo-2.png') }}" width="180" alt="" />
                         </div>
                         <div class="card">
                             <div class="card-body">
@@ -64,6 +72,17 @@
                                                         class="input-group-text bg-transparent"><i
                                                             class='bx bx-hide'></i></a>
                                                 </div>
+                                            </div>
+                                            <div class="captcha-box d-flex flex-column">
+                                                <img src="" alt="" id="captcha"
+                                                    class="img-fluid w-25">
+                                                {{-- <a href="#" class="py-2 d-flex flex-row align-items-center"
+                                                    id="refresh-captcha"><i class="bx bx-refresh font-22"></i>Tukar
+                                                    Code</a> --}}
+                                                <h6 id="text-captha">Hitung Jumlah</h6>
+                                                <input name="code" class="form-control" id="math-answer">
+                                                <small class="py-2 d-flex flex-row align-items-center fw-bold"
+                                                    id="message-captcha-valid"></small>
                                             </div>
                                             <div class="col-12">
                                                 <div class="d-grid">
@@ -97,6 +116,49 @@
                 'Accept': 'application/json',
             }
         }
+        let capcthaAnswer = {
+            answer: '',
+            _token: "{{ csrf_token() }}"
+        };
+
+        const captchaFetch = async () => {
+            try {
+                // Mengambil gambar CAPTCHA dari server
+                const response = await axios.get('/captcha/math');
+
+                // Membuat URL objek dari data blob]
+                $('#text-captha').text(response.data.question)
+            } catch (error) {
+                console.error('Error fetching CAPTCHA image:', error);
+            }
+        };
+
+        const validateCaptcha = async () => {
+
+            capcthaAnswer.answer = document.getElementById('math-answer').value
+            try {
+                const response = await axios.post('/captcha/math/validate', capcthaAnswer);
+                if (response.data.success) {
+                    return true;
+                } else {
+                    Swal.fire({
+                        icon: "error",
+                        title: "Oops...",
+                        text: "Perhitungan CAPTCHA tidak valid!",
+                    });
+                    return false;
+                }
+            } catch (error) {
+                console.log(error.response.data)
+                Swal.fire({
+                    icon: "error",
+                    title: "Oops...",
+                    text: error.response.data.message,
+                });
+                return false
+            }
+        }
+
         let Users = {
             no_badge: '',
             password: '',
@@ -110,8 +172,7 @@
             btnSubmit.html('<i class="fa-solid fa-circle-notch fa-spin"></i> Loading...');
             try {
                 const response = await axios.post('/auth-user/login', Users, headers);
-                console.log(response.data.data.token)
-                window.location.href = '/auth-user/verifikasi-otp';
+                window.location.href = '/mcu-user';
             } catch (error) {
                 if (error.response && error.response.status === 401) {
                     const errors = error.response.data.errors;
@@ -136,12 +197,22 @@
         }
 
         const init = () => {
-
+            captchaFetch();
             $('form#form-login').submit(async function(e) {
                 e.preventDefault();
                 Users.no_badge = $('input#username').val();
                 Users.password = $('input#inputChoosePassword').val();
-                fetchLogin();
+                try {
+                    const captchaValid = await validateCaptcha();
+                    if (captchaValid) {
+                        fetchLogin();
+                    } else {
+                        console.log('Captcha tidak valid');
+                    }
+                } catch (error) {
+                    console.error('Error saat memvalidasi captcha', error);
+                }
+                // fetchLogin();
             });
         }
 

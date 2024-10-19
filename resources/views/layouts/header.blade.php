@@ -1,6 +1,6 @@
     <!--start header wrapper-->
     <header>
-            <div class="topbar d-flex align-items-center">
+            <div class="topbar d-flex align-items-center" style="background-color: #30b91f">
                 <nav class="navbar navbar-expand">
                     <div class="mobile-toggle-menu"><i class='bx bx-menu'></i>
                     </div>

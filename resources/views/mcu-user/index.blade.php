@@ -14,12 +14,14 @@
     <!-- loader-->
     <link href="assets/css/pace.min.css" rel="stylesheet" />
     <script src="assets/js/pace.min.js"></script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.6.0/css/all.min.css" integrity="sha512-Kc323vGBEqzTmouAECnVceyQqyqdsSiqLQISBL29aUW4U/M7pSPA/gEUZQqv1cwx4OnYxTxve5UMg5GT6L4JJg==" crossorigin="anonymous" referrerpolicy="no-referrer" />
     <!-- Bootstrap CSS -->
     <link href="assets/css/bootstrap.min.css" rel="stylesheet">
     <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@400;500&display=swap" rel="stylesheet">
     <link href="assets/css/app.css" rel="stylesheet">
     <link href="assets/css/icons.css" rel="stylesheet">
-    <title>Dashtreme - Multipurpose Bootstrap5 Admin Template</title>
+    <link href="{{ asset('assets/plugins/OwlCarousel/css/owl.carousel.min.css') }}" rel="stylesheet">
+    <title>EHR Applicatiion</title>
     <style>
         .loading-text {
             position: relative;
@@ -61,6 +63,40 @@
                 margin-bottom: 3rem;
             }
         }
+
+        .navbar-light .navbar-nav .nav-link.active,
+        .navbar-light .navbar-nav .show>.nav-link {
+            color: rgb(235 224 224 / 90%);
+        }
+
+        .navbar-light .navbar-nav .nav-link {
+            color: rgb(235 224 224 / 90%);
+        }
+
+        .owl-prev,
+        .owl-next {
+            width: 15px;
+            height: 100px;
+            position: absolute;
+            top: 50%;
+            transform: translateY(-50%);
+            display: block !important;
+            /* border: 0px solid black; */
+        }
+
+        .owl-prev {
+            left: -30px;
+        }
+
+        .owl-next {
+            right: -30px;
+        }
+
+        .owl-prev i,
+        .owl-next i {
+            transform: scale(2, 5);
+            color: #ccc;
+        }
     </style>
 </head>
 
@@ -68,11 +104,12 @@
     <!--wrapper-->
     <div class="wrapper">
         <header class="login-header shadow">
-            <nav class="navbar navbar-expand-lg navbar-light bg-white rounded fixed-top rounded-0 shadow-sm">
-                <div class="container-fluid">
+            <nav class="navbar navbar-expand-lg navbar-light rounded fixed-top rounded-0 shadow-sm"
+                style="background-color: #30b91f">
+                <div class="container">
                     <a class="navbar-brand" href="#">
-                        {{-- <img src="assets/images/logo-1.png" width="70" alt="" /> --}}
-                        <h3>{{ config('app.name') }}</h3>
+                        <img src="{{ asset('static-file/logo-2.png') }}" width="100" alt="" />
+                        {{-- <h3>{{ config('app.name') }}</h3> --}}
                     </a>
                     <button class="navbar-toggler d-none d-sm-none" type="button" data-bs-toggle="collapse"
                         data-bs-target="#navbarSupportedContent1" aria-controls="navbarSupportedContent1"
@@ -91,7 +128,8 @@
                 </div>
             </nav>
         </header>
-        <nav class="navbar navbar-dark bg-primary navbar-expand fixed-bottom d-md-none d-lg-none d-xl-none p-0">
+        <nav class="navbar navbar-dark navbar-expand fixed-bottom d-md-none d-lg-none d-xl-none p-0"
+            style="background-color: #30b91f">
             <ul class="navbar-nav nav-justified w-100">
                 <li class="nav-item">
                     <a href="/mcu-user" class="nav-link text-center">
@@ -123,10 +161,11 @@
             <div class="container">
                 <div class="row">
                     <div class="col-12">
-                        <div class="card">
+                        <div class="card bg-transparent shadow-none">
                             <div class="card-body">
                                 <div class="row">
-                                    <div class="col-lg-4">
+                                    <div class="col-lg-3"></div>
+                                    <div class="col-lg-6">
                                         <div class="card">
                                             <div class="card-body">
                                                 <div class="d-flex flex-column align-items-center text-center">
@@ -134,8 +173,10 @@
                                                         alt="Admin" class="rounded p-1 bg-primary " width="160"
                                                         id="avatar-user">
                                                     <div class="mt-3 ">
-                                                        <h4 id="no-badge" class="loading-text text-white">120943232</h4>
-                                                        <p class="text-secondary mb-1 loading-text text-white" id="name">Mahdiawan
+                                                        <h4 id="no-badge" class="loading-text text-white">120943232
+                                                        </h4>
+                                                        <p class="text-secondary mb-1 loading-text text-white"
+                                                            id="name">Mahdiawan
                                                             Nurkholifah</p>
                                                     </div>
                                                 </div>
@@ -170,13 +211,20 @@
                                             </div>
                                         </div>
                                     </div>
-                                    <div class="col-sm-12 col-md-12 col-xl-8 col-lg-8">
+                                </div>
+                                <div class="row">
+                                    <div class="col-sm-12 col-md-12 col-xl-12 col-lg-12">
                                         <div class="card">
-                                            <div class="card-body">
-                                                <h5 class="d-flex align-items-center mb-3">Riwayat Kesehatan MCU</h5>
-                                                <div class="list-group" id="list-mcu-user">
+                                            <div class="card-body p-5">
+                                                <div class="d-flex justify-content-between">
+                                                    <h5 class="d-flex align-items-center mb-3">Riwayat Kesehatan MCU
+                                                    </h5>
+                                                </div>
+
+
+                                                <div class="list-group owl-carousel owl-theme" id="list-mcu-user">
                                                     <a href="javascript:;"
-                                                        class="list-group-item list-group-item-action loading-text">
+                                                        class="list-group-item list-group-item-action loading-text item">
                                                         <div class="d-flex w-100 justify-content-between ">
                                                             <h5 class="mb-1 text-white">Periode MCU 2021</h5>
                                                             <label class="text-primary text-white"
@@ -222,6 +270,7 @@
     <script src="assets/plugins/perfect-scrollbar/js/perfect-scrollbar.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/axios/dist/axios.min.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+    <script src="{{ asset('assets/plugins/OwlCarousel/js/owl.carousel.min.js') }}"></script>
 
     <!--Password show & hide js -->
     <script>
@@ -251,9 +300,9 @@
                     data.nama_istri_suami).removeClass('loading-text text-white')
                 $('#no-wa-istri-suami').text(
                     data.no_hp_istri_suami).removeClass('loading-text text-white')
-                $('#avatar-user').attr('src', 
-                data.foto ? '{{ asset('storage') }}/' + 
-                data.foto :
+                $('#avatar-user').attr('src',
+                    data.foto ? '{{ asset('storage') }}/' +
+                    data.foto :
                     'https://dummyimage.com/160x215/000/fff.png&text=foto+user')
                 fetchDataMCu(
                     data.id)
@@ -288,7 +337,7 @@
 
                 const elmView = $('#list-mcu-user');
                 elmView.empty();
-                if(data.length == 0){
+                if (data.length == 0) {
                     elmView.append(`<a href="javascript:;" style="cursor: context-menu"
                                                         class="list-group-item list-group-item-action p-0"
                                                         aria-current="true">
@@ -308,7 +357,7 @@
                 const viewList = data.map((item) => {
                     return `
                         <a href="javascript:;" style="cursor: context-menu"
-                                                        class="list-group-item list-group-item-action mb-3"
+                                                        class="list-group-item list-group-item-action mb-3 item"
                                                         aria-current="true">
                                                         <div class="d-flex w-100 justify-content-between">
                                                             <h5 class="mb-1">Periode MCU : ${item.tahun_mcu}</h5>
@@ -339,6 +388,25 @@
                     `
                 }).join('')
                 elmView.append(viewList)
+                $('.owl-carousel').owlCarousel({
+                    loop: true,
+                    margin: 10,
+                    nav: true,
+                    navText: ['<i class="fa fa-angle-left" aria-hidden="true"></i>',
+                        '<i class="fa fa-angle-right" aria-hidden="true"></i>'
+                    ],
+                    responsive: {
+                        0: {
+                            items: 1
+                        },
+                        600: {
+                            items: 1
+                        },
+                        1000: {
+                            items: 1
+                        }
+                    }
+                })
             } catch (error) {
                 console.log(error)
             }
@@ -360,7 +428,7 @@
                 console.log(error);
             }
         };
-        
+
         $(document).ready(function() {
             fetchData();
             $("#show_hide_password a").on('click', function(event) {

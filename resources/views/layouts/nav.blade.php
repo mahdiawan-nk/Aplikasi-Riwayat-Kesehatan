@@ -1,10 +1,10 @@
 <div class="sidebar-wrapper" data-simplebar="true">
-    <div class="sidebar-header">
+    <div class="sidebar-header" style="background-color: #30b91f">
         <div>
-            <img src="{{ asset('') }}assets/images/logo-icon.png" class="logo-icon" alt="logo icon">
+            <img src="{{ asset('static-file/logo-2.png') }}" class="logo-icon" alt="logo icon" style="width: 100px;">
         </div>
         <div>
-            <h4 class="logo-text">Syndron</h4>
+            {{-- <h4 class="logo-text">EHR</h4> --}}
         </div>
         <div class="toggle-icon ms-auto"><i class='bx bx-arrow-to-left'></i>
         </div>
